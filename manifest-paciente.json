@@ -1,0 +1,22 @@
+{
+  "name": "ViñaMed – Mi Salud",
+  "short_name": "Mi Salud",
+  "description": "Portal de pacientes ViñaMed. Resultados, citas y mensajería.",
+  "start_url": "./paciente.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#f8fafc",
+  "orientation": "portrait-primary",
+  "lang": "es-CL",
+  "categories": ["medical", "health"],
+  "icons": [
+    { "src": "logo_vinamed.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "logo_vinamed.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Mis resultados", "short_name": "Resultados", "url": "./paciente.html#resultados" },
+    { "name": "Mis citas",      "short_name": "Citas",      "url": "./paciente.html#citas" },
+    { "name": "Mensajes",       "short_name": "Mensajes",   "url": "./paciente.html#mensajes" }
+  ]
+}

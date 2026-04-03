@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f8fafc">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ViñaMed">
+<meta name="description" content="Tu salud, siempre a mano. Portal de pacientes ViñaMed.">
+<link rel="manifest" href="manifest-paciente.json">
+<title>ViñaMed – Mi Salud</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS — Warm clinical light theme
+═══════════════════════════════════════════ */
+:root {
+  --teal:    #0891b2;
+  --teal-l:  #06b6d4;
+  --teal-xl: #cffafe;
+  --green:   #059669;
+  --green-l: #d1fae5;
+  --amber:   #d97706;
+  --amber-l: #fef3c7;
+  --red:     #dc2626;
+  --red-l:   #fee2e2;
+
+  --bg:      #f0f4f8;
+  --surface: #ffffff;
+  --surface2:#f8fafc;
+  --border:  #e2e8f0;
+  --border2: #cbd5e1;
+
+  --text:    #0f172a;
+  --text2:   #334155;
+  --muted:   #64748b;
+  --faint:   #94a3b8;
+
+  --r:       16px;
+  --r-sm:    10px;
+  --ease:    cubic-bezier(.4,0,.2,1);
+  --t:       .2s var(--ease);
+
+  --nav-h:   64px;
+  --header-h:60px;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { -webkit-tap-highlight-color:transparent; scroll-behavior:smooth }
+body {
+  font-family:'Figtree',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  min-height:100dvh;
+  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));
+  overflow-x:hidden;
+}
+::selection { background:var(--teal-xl) }
+::-webkit-scrollbar { width:4px }
+::-webkit-scrollbar-track { background:transparent }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:9px }
+
+/* ═══════════════════════════════════════════
+   LOGIN SCREEN
+═══════════════════════════════════════════ */
+.login-screen {
+  position:fixed; inset:0; z-index:500;
+  background:linear-gradient(160deg, #0c4a6e 0%, #164e63 40%, #0891b2 100%);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:2rem 1.5rem;
+  transition:opacity .4s, transform .4s;
+}
+.login-screen.hidden { opacity:0; transform:scale(1.04); pointer-events:none }
+
+.login-logo {
+  width:72px; height:72px; border-radius:22px;
+  background:rgba(255,255,255,.12);
+  border:1.5px solid rgba(255,255,255,.2);
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:1.5rem;
+}
+.login-logo img { width:48px; height:48px; object-fit:contain }
+.login-logo .logo-fallback {
+  font-family:'Instrument Serif',serif;
+  font-size:1.8rem; color:#fff; font-style:italic;
+}
+
+.login-title {
+  font-family:'Instrument Serif',serif;
+  font-size:2rem; font-style:italic;
+  color:#fff; text-align:center; margin-bottom:.4rem;
+}
+.login-sub { font-size:.9rem; color:rgba(255,255,255,.65); text-align:center; margin-bottom:2.5rem }
+
+.login-card {
+  width:100%; max-width:380px;
+  background:rgba(255,255,255,.1);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:var(--r);
+  padding:1.75rem 1.5rem;
+}
+
+.login-field { margin-bottom:1rem }
+.login-field label { display:block; font-size:.78rem; font-weight:600; color:rgba(255,255,255,.75); margin-bottom:.4rem; letter-spacing:.04em }
+.login-field input {
+  width:100%; padding:.75rem 1rem;
+  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2);
+  border-radius:10px; color:#fff; font-family:'Figtree',sans-serif; font-size:.95rem;
+  outline:none; transition:border-color .2s;
+}
+.login-field input::placeholder { color:rgba(255,255,255,.4) }
+.login-field input:focus { border-color:rgba(255,255,255,.5) }
+.login-field input:-webkit-autofill { -webkit-text-fill-color:#fff }
+
+.login-hint {
+  font-size:.75rem; color:rgba(255,255,255,.5);
+  text-align:center; margin:1rem 0;
+  line-height:1.5;
+}
+
+.btn-login {
+  width:100%; padding:.85rem; border-radius:12px;
+  background:#fff; color:#0891b2;
+  font-family:'Figtree',sans-serif; font-size:.95rem; font-weight:700;
+  border:none; cursor:pointer; transition:var(--t);
+}
+.btn-login:hover { background:#e0f2fe }
+.btn-login:active { transform:scale(.98) }
+
+.demo-chips {
+  display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.25rem; justify-content:center;
+}
+.demo-chip {
+  padding:.3rem .8rem; border-radius:99px; font-size:.75rem;
+  background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.75); cursor:pointer; transition:var(--t);
+}
+.demo-chip:hover { background:rgba(255,255,255,.18) }
+
+/* ═══════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════ */
+.app-header {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  height:var(--header-h);
+  background:rgba(248,250,252,.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center;
+  padding:0 1.25rem; gap:.75rem;
+}
+.header-greeting { flex:1 }
+.header-greeting .hi { font-size:.78rem; color:var(--muted); font-weight:500 }
+.header-greeting .name {
+  font-family:'Instrument Serif',serif;
+  font-size:1.15rem; font-style:italic; color:var(--text);
+}
+.header-avatar {
+  width:38px; height:38px; border-radius:50%;
+  background:linear-gradient(135deg,var(--teal),var(--green));
+  display:flex; align-items:center; justify-content:center;
+  font-size:.85rem; font-weight:700; color:#fff;
+  flex-shrink:0; cursor:pointer; border:2px solid var(--surface);
+  box-shadow:0 2px 8px rgba(8,145,178,.25);
+}
+.notif-btn {
+  width:38px; height:38px; border-radius:10px;
+  background:var(--surface); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; position:relative; transition:var(--t);
+}
+.notif-btn:hover { background:var(--surface2) }
+.notif-btn svg { width:18px; height:18px; stroke:var(--muted); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round }
+.notif-dot { position:absolute; top:7px; right:7px; width:7px; height:7px; border-radius:50%; background:#ef4444; border:1.5px solid var(--surface) }
+
+/* ═══════════════════════════════════════════
+   BOTTOM NAV
+═══════════════════════════════════════════ */
+.bottom-nav {
+  position:fixed; bottom:0; left:0; right:0; z-index:100;
+  height:var(--nav-h);
+  background:rgba(255,255,255,.95);
+  backdrop-filter:blur(16px);
+  border-top:1px solid var(--border);
+  display:flex; align-items:center;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.nav-tab {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:.25rem; cursor:pointer;
+  padding:.5rem 0; transition:var(--t);
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-tab svg { width:22px; height:22px; stroke:var(--faint); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; transition:var(--t) }
+.nav-tab span { font-size:.65rem; font-weight:600; color:var(--faint); transition:var(--t); letter-spacing:.02em }
+.nav-tab.active svg { stroke:var(--teal) }
+.nav-tab.active span { color:var(--teal) }
+.nav-tab .tab-dot { width:4px; height:4px; border-radius:50%; background:var(--teal); opacity:0; transition:var(--t); margin-top:-2px }
+.nav-tab.active .tab-dot { opacity:1 }
+
+/* ═══════════════════════════════════════════
+   PAGES
+═══════════════════════════════════════════ */
+main {
+  padding-top:var(--header-h);
+  min-height:100dvh;
+}
+.page { display:none; animation:slideUp .28s var(--ease) both }
+.page.active { display:block }
+
+@keyframes slideUp {
+  from { opacity:0; transform:translateY(12px) }
+  to   { opacity:1; transform:translateY(0) }
+}
+
+.page-inner { padding:1.25rem 1.1rem 1.5rem }
+
+/* Section titles */
+.sec { margin-bottom:1.35rem }
+.sec-head { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:.9rem }
+.sec-head h2 { font-family:'Instrument Serif',serif; font-size:1.25rem; font-style:italic; color:var(--text) }
+.sec-head a { font-size:.8rem; color:var(--teal); font-weight:600; text-decoration:none; cursor:pointer }
+
+/* Cards */
+.card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r); overflow:hidden;
+  box-shadow:0 1px 4px rgba(15,23,42,.06);
+  margin-bottom:.75rem;
+  transition:var(--t);
+}
+.card:active { transform:scale(.99) }
+
+/* ═══════════════════════════════════════════
+   HOME TAB
+═══════════════════════════════════════════ */
+.hero-card {
+  background:linear-gradient(135deg,#0c4a6e,#0891b2);
+  border-radius:var(--r); padding:1.5rem;
+  margin-bottom:1.25rem; position:relative; overflow:hidden;
+}
+.hero-card::before {
+  content:''; position:absolute; top:-40px; right:-40px;
+  width:180px; height:180px; border-radius:50%;
+  background:rgba(255,255,255,.06); pointer-events:none;
+}
+.hero-card::after {
+  content:''; position:absolute; bottom:-60px; left:20%;
+  width:220px; height:220px; border-radius:50%;
+  background:rgba(255,255,255,.04); pointer-events:none;
+}
+.hero-card .hero-label { font-size:.72rem; font-weight:600; color:rgba(255,255,255,.6); letter-spacing:.07em; text-transform:uppercase; margin-bottom:.3rem }
+.hero-card .hero-title { font-family:'Instrument Serif',serif; font-size:1.6rem; font-style:italic; color:#fff; margin-bottom:.5rem; line-height:1.2 }
+.hero-card .hero-sub { font-size:.83rem; color:rgba(255,255,255,.7); line-height:1.5 }
+.hero-next {
+  margin-top:1.25rem; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18);
+  border-radius:10px; padding:.85rem 1rem;
+  display:flex; align-items:center; gap:.85rem; cursor:pointer;
+}
+.hero-next-icon { width:36px; height:36px; border-radius:9px; background:rgba(255,255,255,.15); display:flex; align-items:center; justify-content:center; flex-shrink:0 }
+.hero-next-icon svg { width:18px; height:18px; stroke:#fff; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round }
+.hero-next-text .lbl { font-size:.78rem; color:rgba(255,255,255,.65) }
+.hero-next-text .val { font-size:.9rem; font-weight:600; color:#fff; margin-top:.05rem }
+.hero-next-arrow { margin-left:auto; color:rgba(255,255,255,.5); font-size:1.1rem }
+
+/* Quick actions */
+.quick-actions { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:1.25rem }
+.qa-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r); padding:1.1rem 1rem;
+  display:flex; flex-direction:column; gap:.6rem;
+  cursor:pointer; transition:var(--t);
+  box-shadow:0 1px 4px rgba(15,23,42,.06);
+}
+.qa-card:active { transform:scale(.97) }
+.qa-icon { width:40px; height:40px; border-radius:11px; display:flex; align-items:center; justify-content:center }
+.qa-icon svg { width:19px; height:19px; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round }
+.qa-label { font-size:.85rem; font-weight:600; color:var(--text); line-height:1.3 }
+.qa-sub { font-size:.75rem; color:var(--muted) }
+
+/* Resultado card */
+.result-card { padding:1rem 1.1rem; cursor:pointer }
+.result-card .rc-head { display:flex; align-items:center; gap:.85rem }
+.rc-icon { width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0 }
+.rc-icon svg { width:20px; height:20px; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round }
+.rc-info { flex:1; min-width:0 }
+.rc-type { font-size:.82rem; font-weight:600; color:var(--text2) }
+.rc-date { font-size:.75rem; color:var(--muted); margin-top:.06rem }
+.rc-badge { font-size:.68rem; font-weight:700; padding:.22rem .65rem; border-radius:99px; white-space:nowrap; flex-shrink:0 }
+.rc-badge.new { background:var(--teal-xl); color:var(--teal) }
+.rc-badge.seen { background:var(--surface2); color:var(--muted) }
+.rc-preview { margin-top:.85rem; padding:.85rem; background:var(--surface2); border-radius:10px; font-size:.8rem; color:var(--text2); line-height:1.55; display:none }
+.rc-preview.open { display:block }
+.rc-divider { height:1px; background:var(--border); margin:.85rem 0 }
+
+/* ═══════════════════════════════════════════
+   RESULTADOS TAB
+═══════════════════════════════════════════ */
+.filter-row { display:flex; gap:.5rem; margin-bottom:1rem; overflow-x:auto; padding-bottom:.25rem }
+.filter-row::-webkit-scrollbar { display:none }
+.filter-chip {
+  padding:.38rem .9rem; border-radius:99px; font-size:.78rem; font-weight:600;
+  border:1.5px solid var(--border2); color:var(--muted); background:var(--surface);
+  cursor:pointer; white-space:nowrap; transition:var(--t); flex-shrink:0;
+}
+.filter-chip.active { background:var(--teal); border-color:var(--teal); color:#fff }
+
+.result-full {
+  padding:1.1rem; cursor:pointer;
+}
+.rf-head { display:flex; align-items:flex-start; gap:.9rem }
+.rf-icon { width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0 }
+.rf-icon svg { width:22px; height:22px; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round }
+.rf-meta { flex:1 }
+.rf-type { font-size:.92rem; font-weight:700; color:var(--text) }
+.rf-date { font-size:.77rem; color:var(--muted); margin-top:.08rem }
+.rf-doctor { font-size:.77rem; color:var(--text2); margin-top:.25rem; display:flex; align-items:center; gap:.3rem }
+.rf-doctor svg { width:13px; height:13px; stroke:var(--muted); fill:none; stroke-width:2; stroke-linecap:round }
+.rf-badges { display:flex; gap:.4rem; margin-top:.65rem; flex-wrap:wrap }
+.rf-badge { font-size:.7rem; font-weight:600; padding:.2rem .65rem; border-radius:99px }
+.rf-badge.new { background:var(--teal-xl); color:var(--teal) }
+.rf-badge.normal { background:var(--green-l); color:var(--green) }
+.rf-badge.revisar { background:var(--amber-l); color:var(--amber) }
+
+.expand-body {
+  max-height:0; overflow:hidden;
+  transition:max-height .35s var(--ease);
+}
+.expand-body.open { max-height:600px }
+.expand-inner { padding:1rem 0 .25rem }
+.field-group { margin-bottom:.85rem }
+.field-group .fg-label { font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); font-weight:600; margin-bottom:.3rem }
+.field-group .fg-value { font-size:.88rem; color:var(--text2); line-height:1.6 }
+.expand-actions { display:flex; gap:.6rem; flex-wrap:wrap; padding:.5rem 0 .5rem }
+
+/* ═══════════════════════════════════════════
+   CITAS TAB
+═══════════════════════════════════════════ */
+.calendar-strip {
+  display:flex; gap:.5rem; overflow-x:auto; padding:.25rem .1rem .75rem;
+  margin-bottom:1rem;
+}
+.calendar-strip::-webkit-scrollbar { display:none }
+.cal-day {
+  flex-shrink:0; width:52px;
+  display:flex; flex-direction:column; align-items:center;
+  padding:.65rem .4rem; border-radius:12px;
+  border:1.5px solid var(--border); background:var(--surface);
+  cursor:pointer; transition:var(--t);
+}
+.cal-day:active { transform:scale(.95) }
+.cal-day .dow { font-size:.65rem; font-weight:600; color:var(--faint); text-transform:uppercase; letter-spacing:.05em }
+.cal-day .dom { font-size:1.1rem; font-weight:700; color:var(--text); margin:.1rem 0 }
+.cal-day .dot { width:5px; height:5px; border-radius:50%; background:var(--teal); opacity:0 }
+.cal-day.has-event .dot { opacity:1 }
+.cal-day.active { background:var(--teal); border-color:var(--teal) }
+.cal-day.active .dow, .cal-day.active .dom { color:#fff }
+.cal-day.active .dot { background:#fff }
+.cal-day.today .dom { color:var(--teal) }
+
+.appointment-card { padding:1.1rem 1.15rem; margin-bottom:.75rem }
+.apt-head { display:flex; align-items:center; gap:.9rem }
+.apt-time { text-align:center; flex-shrink:0; min-width:48px }
+.apt-time .t { font-size:1rem; font-weight:700; color:var(--teal); font-family:'Instrument Serif',serif; font-style:italic }
+.apt-time .ampm { font-size:.65rem; color:var(--muted); font-weight:600; text-transform:uppercase }
+.apt-divider-v { width:2px; height:40px; background:var(--border); border-radius:2px; flex-shrink:0 }
+.apt-info .apt-type { font-size:.9rem; font-weight:700; color:var(--text) }
+.apt-info .apt-doctor { font-size:.8rem; color:var(--muted); margin-top:.12rem }
+.apt-info .apt-location { font-size:.78rem; color:var(--teal); margin-top:.18rem; display:flex; align-items:center; gap:.25rem }
+.apt-info .apt-location svg { width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round }
+.apt-status { margin-left:auto; flex-shrink:0 }
+.status-pill { font-size:.7rem; font-weight:700; padding:.25rem .7rem; border-radius:99px }
+.status-pill.confirmed { background:var(--green-l); color:var(--green) }
+.status-pill.pending { background:var(--amber-l); color:var(--amber) }
+.status-pill.done { background:var(--surface2); color:var(--muted) }
+
+.apt-actions { display:flex; gap:.6rem; margin-top:1rem; padding-top:.85rem; border-top:1px solid var(--border) }
+
+.new-apt-banner {
+  background:linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border:1.5px dashed var(--teal); border-radius:var(--r);
+  padding:1.25rem; text-align:center; cursor:pointer;
+  transition:var(--t); margin-top:.5rem;
+}
+.new-apt-banner:hover { background:#e0f2fe }
+.new-apt-banner .nab-icon { font-size:1.5rem; margin-bottom:.4rem }
+.new-apt-banner .nab-title { font-size:.92rem; font-weight:700; color:var(--teal) }
+.new-apt-banner .nab-sub { font-size:.78rem; color:var(--muted); margin-top:.2rem }
+
+/* ═══════════════════════════════════════════
+   MENSAJES TAB
+═══════════════════════════════════════════ */
+.msg-thread {
+  display:flex; flex-direction:column;
+  height:calc(100dvh - var(--header-h) - var(--nav-h) - 80px);
+  min-height:320px;
+}
+.msg-list { flex:1; overflow-y:auto; padding:1rem 1.1rem; display:flex; flex-direction:column; gap:.9rem }
+.msg-bubble { max-width:82%; display:flex; flex-direction:column; gap:.2rem }
+.msg-bubble.mine { align-self:flex-end; align-items:flex-end }
+.msg-bubble.theirs { align-self:flex-start; align-items:flex-start }
+.bubble-body {
+  padding:.75rem 1rem; border-radius:16px; font-size:.88rem; line-height:1.5;
+}
+.msg-bubble.mine .bubble-body { background:var(--teal); color:#fff; border-bottom-right-radius:4px }
+.msg-bubble.theirs .bubble-body { background:var(--surface); border:1px solid var(--border); color:var(--text); border-bottom-left-radius:4px }
+.bubble-meta { font-size:.68rem; color:var(--faint); padding:0 .25rem }
+.msg-sender { font-size:.72rem; font-weight:600; color:var(--teal); margin-bottom:.1rem; padding:0 .25rem }
+
+.msg-input-wrap {
+  padding:.85rem 1.1rem;
+  background:var(--surface); border-top:1px solid var(--border);
+  display:flex; align-items:flex-end; gap:.65rem;
+}
+.msg-input {
+  flex:1; background:var(--surface2); border:1.5px solid var(--border);
+  border-radius:12px; padding:.65rem .9rem;
+  font-family:'Figtree',sans-serif; font-size:.9rem; color:var(--text);
+  resize:none; outline:none; min-height:44px; max-height:120px;
+  line-height:1.5; transition:border-color .2s;
+}
+.msg-input:focus { border-color:var(--teal) }
+.btn-send {
+  width:44px; height:44px; border-radius:12px; flex-shrink:0;
+  background:var(--teal); border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:var(--t);
+}
+.btn-send:hover { background:#0e7490 }
+.btn-send svg { width:18px; height:18px; stroke:#fff; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round }
+
+.unread-banner {
+  background:var(--teal-xl); border:1px solid rgba(8,145,178,.2);
+  border-radius:10px; padding:.65rem .9rem; margin:.5rem 1.1rem;
+  font-size:.8rem; color:var(--teal); font-weight:600; text-align:center;
+}
+
+/* ═══════════════════════════════════════════
+   PERFIL TAB
+═══════════════════════════════════════════ */
+.profile-header {
+  background:linear-gradient(135deg, #0c4a6e, #0891b2);
+  padding:2rem 1.25rem 3.5rem;
+  text-align:center; position:relative;
+}
+.profile-avatar {
+  width:80px; height:80px; border-radius:50%;
+  background:rgba(255,255,255,.2); border:3px solid rgba(255,255,255,.4);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Instrument Serif',serif; font-size:2rem; font-style:italic; color:#fff;
+  margin:0 auto 1rem;
+}
+.profile-name { font-family:'Instrument Serif',serif; font-size:1.5rem; font-style:italic; color:#fff }
+.profile-rut { font-size:.82rem; color:rgba(255,255,255,.65); margin-top:.25rem }
+
+.profile-body { padding:1rem 1.1rem; margin-top:-2rem }
+.profile-card {
+  background:var(--surface); border-radius:var(--r);
+  border:1px solid var(--border); overflow:hidden;
+  box-shadow:0 4px 16px rgba(15,23,42,.08);
+  margin-bottom:1rem;
+}
+.profile-row {
+  display:flex; align-items:center; gap:.9rem;
+  padding:.9rem 1.1rem; border-bottom:1px solid var(--border);
+  cursor:pointer; transition:var(--t);
+}
+.profile-row:last-child { border-bottom:none }
+.profile-row:hover { background:var(--surface2) }
+.pr-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0 }
+.pr-icon svg { width:17px; height:17px; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round }
+.pr-label { flex:1; font-size:.9rem; font-weight:500; color:var(--text) }
+.pr-value { font-size:.82rem; color:var(--muted) }
+.pr-arrow { color:var(--faint); font-size:.9rem }
+
+.logout-btn {
+  width:100%; padding:.85rem; border-radius:var(--r);
+  background:var(--surface); border:1.5px solid var(--border);
+  color:var(--red); font-family:'Figtree',sans-serif; font-size:.9rem; font-weight:600;
+  cursor:pointer; transition:var(--t); display:flex; align-items:center; justify-content:center; gap:.5rem;
+}
+.logout-btn:hover { background:#fef2f2; border-color:var(--red) }
+.logout-btn svg { width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round }
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════ */
+.btn {
+  padding:.6rem 1.15rem; border-radius:10px;
+  font-family:'Figtree',sans-serif; font-size:.83rem; font-weight:600;
+  cursor:pointer; transition:var(--t); border:none;
+  display:inline-flex; align-items:center; gap:.4rem;
+}
+.btn svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round }
+.btn-primary { background:var(--teal); color:#fff }
+.btn-primary:hover { background:#0e7490 }
+.btn-outline { background:transparent; border:1.5px solid var(--border2); color:var(--text2) }
+.btn-outline:hover { border-color:var(--teal); color:var(--teal) }
+.btn-ghost { background:transparent; color:var(--muted) }
+.btn-ghost:hover { color:var(--text) }
+.btn-danger { background:#fef2f2; border:1.5px solid #fecaca; color:var(--red) }
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+.toast {
+  position:fixed; bottom:calc(var(--nav-h) + 1rem); left:1rem; right:1rem; z-index:300;
+  background:var(--text); color:#fff; border-radius:12px;
+  padding:.75rem 1.1rem; font-size:.85rem;
+  display:flex; align-items:center; gap:.6rem;
+  box-shadow:0 8px 32px rgba(0,0,0,.2);
+  transform:translateY(20px); opacity:0;
+  transition:transform .25s var(--ease), opacity .25s;
+  pointer-events:none;
+}
+.toast.show { transform:translateY(0); opacity:1 }
+.toast-bar { position:absolute; bottom:0; left:0; height:2px; background:var(--teal); border-radius:0 0 12px 12px; animation:none }
+.toast.show .toast-bar { animation:shrink 3s linear forwards }
+@keyframes shrink { to { transform:scaleX(0); transform-origin:left } }
+
+/* ═══════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════ */
+.modal-overlay {
+  display:none; position:fixed; inset:0; z-index:200;
+  background:rgba(15,23,42,.5); backdrop-filter:blur(4px);
+  align-items:flex-end; justify-content:center; padding:0;
+}
+.modal-overlay.open { display:flex }
+.modal-sheet {
+  background:var(--surface); border-radius:20px 20px 0 0;
+  width:100%; max-height:85dvh; overflow-y:auto;
+  padding:1.5rem 1.25rem 2rem;
+  animation:slideSheet .3s var(--ease) both;
+}
+@keyframes slideSheet { from { transform:translateY(100%) } to { transform:translateY(0) } }
+.sheet-handle { width:36px; height:4px; background:var(--border2); border-radius:2px; margin:0 auto 1.25rem }
+.modal-sheet h3 { font-family:'Instrument Serif',serif; font-size:1.25rem; font-style:italic; margin-bottom:1.1rem }
+
+/* ═══════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════ */
+.empty-state { text-align:center; padding:3rem 1rem; color:var(--muted) }
+.empty-state .es-icon { font-size:2.5rem; margin-bottom:.75rem }
+.empty-state p { font-size:.88rem; line-height:1.55 }
+.tag { display:inline-flex; align-items:center; padding:.2rem .65rem; border-radius:99px; font-size:.72rem; font-weight:600 }
+.tag.teal { background:var(--teal-xl); color:var(--teal) }
+.tag.green { background:var(--green-l); color:var(--green) }
+.tag.amber { background:var(--amber-l); color:var(--amber) }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ LOGIN SCREEN ══════════════════ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-logo">
+    <img src="logo_vinamed.png" alt="ViñaMed" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+    <span class="logo-fallback" style="display:none">V</span>
+  </div>
+  <div class="login-title">Mi Salud</div>
+  <div class="login-sub">Portal de pacientes · ViñaMed</div>
+
+  <div class="login-card">
+    <div class="login-field">
+      <label>RUT</label>
+      <input type="text" id="loginRut" placeholder="12.345.678-9" maxlength="12">
+    </div>
+    <div class="login-field">
+      <label>Código de acceso</label>
+      <input type="password" id="loginCode" placeholder="Código enviado por el centro" maxlength="6">
+    </div>
+    <div class="login-hint">
+      El centro te entrega un código de acceso al momento de tu atención.<br>
+      <strong style="color:rgba(255,255,255,.8)">Demo:</strong> usa cualquier RUT y código "123456"
+    </div>
+    <button class="btn-login" onclick="doLogin()">Ingresar a mi portal</button>
+    <div class="demo-chips">
+      <div class="demo-chip" onclick="fillDemo('17.543.210-K','123456')">Demo: Ana Ramírez</div>
+      <div class="demo-chip" onclick="fillDemo('10.234.567-8','123456')">Demo: María González</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ HEADER ══════════════════ -->
+<header class="app-header" id="appHeader" style="display:none">
+  <div class="header-greeting">
+    <div class="hi">Buenos días,</div>
+    <div class="name" id="headerName">Paciente</div>
+  </div>
+  <div class="notif-btn" onclick="showTab('mensajes')">
+    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <div class="notif-dot" id="notifDot"></div>
+  </div>
+  <div class="header-avatar" id="headerAvatar" onclick="showTab('perfil')">A</div>
+</header>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<main id="appMain" style="display:none">
+
+  <!-- HOME -->
+  <div class="page active" id="tab-home">
+    <div class="page-inner">
+
+      <div class="hero-card">
+        <div class="hero-label">Tu próxima atención</div>
+        <div class="hero-title">Ecografía<br>Abdominal</div>
+        <div class="hero-sub">Tienes una cita agendada para esta semana en ViñaMed</div>
+        <div class="hero-next" onclick="showTab('citas')">
+          <div class="hero-next-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="hero-next-text">
+            <div class="lbl">Próxima cita</div>
+            <div class="val">Mié 9 de abril · 10:30</div>
+          </div>
+          <div class="hero-next-arrow">›</div>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <div class="qa-card" onclick="showTab('resultados')">
+          <div class="qa-icon" style="background:#e0f2fe">
+            <svg viewBox="0 0 24 24" style="stroke:#0891b2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+          </div>
+          <div class="qa-label">Ver resultados</div>
+          <div class="qa-sub">1 nuevo informe</div>
+        </div>
+        <div class="qa-card" onclick="showTab('citas')">
+          <div class="qa-icon" style="background:#d1fae5">
+            <svg viewBox="0 0 24 24" style="stroke:#059669"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="qa-label">Mis citas</div>
+          <div class="qa-sub">Próxima el miér.</div>
+        </div>
+        <div class="qa-card" onclick="showTab('mensajes')">
+          <div class="qa-icon" style="background:#fef3c7">
+            <svg viewBox="0 0 24 24" style="stroke:#d97706"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="qa-label">Mensajes</div>
+          <div class="qa-sub" id="msgCount">1 sin leer</div>
+        </div>
+        <div class="qa-card" onclick="showTab('perfil')">
+          <div class="qa-icon" style="background:#f3e8ff">
+            <svg viewBox="0 0 24 24" style="stroke:#7c3aed"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div class="qa-label">Mi perfil</div>
+          <div class="qa-sub">Ver ficha</div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <h2>Últimos resultados</h2>
+          <a onclick="showTab('resultados')">Ver todos</a>
+        </div>
+        <div class="card result-card" onclick="toggleResult(this)">
+          <div class="rc-head">
+            <div class="rc-icon" style="background:#e0f2fe">
+              <svg viewBox="0 0 24 24" style="stroke:#0891b2"><ellipse cx="12" cy="12" rx="10" ry="6"/><path d="M12 6c2 3.5 2 8.5 0 12"/><path d="M2 12h20"/></svg>
+            </div>
+            <div class="rc-info">
+              <div class="rc-type">Ecografía Partes Blandas</div>
+              <div class="rc-date">3 de abril, 2026 · Dr. Martín Rojas</div>
+            </div>
+            <span class="rc-badge new">Nuevo</span>
+          </div>
+          <div class="rc-divider"></div>
+          <div class="rc-preview open">
+            <strong style="display:block;margin-bottom:.4rem;font-size:.82rem">Impresión diagnóstica:</strong>
+            Ecografía de rodilla derecha sin hallazgos patológicos significativos. Estructuras musculotendinosas conservadas. Sin derrame articular visible.
+          </div>
+        </div>
+      </div>
+
+      <!-- Info centro -->
+      <div class="sec">
+        <div class="sec-head"><h2>El centro</h2></div>
+        <div class="card">
+          <div class="profile-row" onclick="showToast('Abriendo Maps...','📍')">
+            <div class="pr-icon" style="background:#e0f2fe"><svg viewBox="0 0 24 24" style="stroke:#0891b2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            <div class="pr-label">Medio Oriente 831, Of. 408</div>
+            <div class="pr-arrow">›</div>
+          </div>
+          <div class="profile-row" onclick="showToast('Llamando al centro...','📞')">
+            <div class="pr-icon" style="background:#d1fae5"><svg viewBox="0 0 24 24" style="stroke:#059669"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+            <div class="pr-label">Llamar al centro</div>
+            <div class="pr-arrow">›</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RESULTADOS -->
+  <div class="page" id="tab-resultados">
+    <div class="page-inner">
+      <div class="sec-head" style="margin-bottom:.85rem">
+        <h2>Mis resultados</h2>
+      </div>
+      <div class="filter-row">
+        <div class="filter-chip active" onclick="filterResults(this,'todos')">Todos</div>
+        <div class="filter-chip" onclick="filterResults(this,'eco')">Ecografía</div>
+        <div class="filter-chip" onclick="filterResults(this,'enfermeria')">Enfermería</div>
+        <div class="filter-chip" onclick="filterResults(this,'laboratorio')">Laboratorio</div>
+      </div>
+
+      <!-- Resultado 1 — nuevo -->
+      <div class="card result-full" data-cat="eco">
+        <div class="rf-head" onclick="toggleExpand(this.closest('.card'))">
+          <div class="rf-icon" style="background:#e0f2fe">
+            <svg viewBox="0 0 24 24" style="stroke:#0891b2"><ellipse cx="12" cy="12" rx="10" ry="6"/><path d="M12 6c2 3.5 2 8.5 0 12"/><path d="M2 12h20"/></svg>
+          </div>
+          <div class="rf-meta">
+            <div class="rf-type">Ecografía Partes Blandas</div>
+            <div class="rf-date">3 de abril, 2026</div>
+            <div class="rf-doctor"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg> Dr. Martín Rojas</div>
+            <div class="rf-badges">
+              <span class="rf-badge new">Nuevo</span>
+              <span class="rf-badge normal">Normal</span>
+            </div>
+          </div>
+        </div>
+        <div class="expand-body">
+          <div class="expand-inner">
+            <div class="field-group">
+              <div class="fg-label">Región / Detalle</div>
+              <div class="fg-value">Rodilla derecha</div>
+            </div>
+            <div class="field-group">
+              <div class="fg-label">Indicación clínica</div>
+              <div class="fg-value">Dolor en cara lateral de rodilla, descartar patología de partes blandas</div>
+            </div>
+            <div class="field-group">
+              <div class="fg-label">Hallazgos</div>
+              <div class="fg-value">Tendón rotuliano de calibre y ecogenicidad conservada. Sin derrame articular. Menisco lateral sin alteraciones ecográficas. Banda iliotibial sin engrosamiento significativo. Sin colecciones.</div>
+            </div>
+            <div class="field-group">
+              <div class="fg-label">Impresión diagnóstica</div>
+              <div class="fg-value">Ecografía de rodilla derecha sin hallazgos patológicos significativos. Estructuras musculotendinosas conservadas.</div>
+            </div>
+            <div class="expand-actions">
+              <button class="btn btn-primary" onclick="showToast('Descargando PDF...','📄')">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Descargar PDF
+              </button>
+              <button class="btn btn-outline" onclick="showToast('Compartiendo informe...','📤')">Compartir</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resultado 2 -->
+      <div class="card result-full" data-cat="eco">
+        <div class="rf-head" onclick="toggleExpand(this.closest('.card'))">
+          <div class="rf-icon" style="background:#e0f2fe">
+            <svg viewBox="0 0 24 24" style="stroke:#0891b2"><ellipse cx="12" cy="12" rx="10" ry="6"/><path d="M12 6c2 3.5 2 8.5 0 12"/><path d="M2 12h20"/></svg>
+          </div>
+          <div class="rf-meta">
+            <div class="rf-type">Ecografía Abdominal</div>
+            <div class="rf-date">15 de enero, 2026</div>
+            <div class="rf-doctor"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg> Dr. Martín Rojas</div>
+            <div class="rf-badges">
+              <span class="rf-badge revisar">Revisar con médico</span>
+            </div>
+          </div>
+        </div>
+        <div class="expand-body">
+          <div class="expand-inner">
+            <div class="field-group">
+              <div class="fg-label">Indicación clínica</div>
+              <div class="fg-value">Dolor en hipocondrio derecho, control hepático</div>
+            </div>
+            <div class="field-group">
+              <div class="fg-label">Hallazgos</div>
+              <div class="fg-value">Hígado de tamaño conservado con leve aumento de ecogenicidad difusa compatible con esteatosis hepática leve. Vía biliar no dilatada. Vesícula sin litiasis.</div>
+            </div>
+            <div class="field-group">
+              <div class="fg-label">Impresión diagnóstica</div>
+              <div class="fg-value">Hallazgos compatibles con esteatosis hepática leve. Se recomienda control clínico y eventual perfil lipídico.</div>
+            </div>
+            <div class="expand-actions">
+              <button class="btn btn-primary" onclick="showToast('Descargando PDF...','📄')">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Descargar PDF
+              </button>
+              <button class="btn btn-outline" onclick="showTab('mensajes')">Consultar al centro</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resultado 3 enfermería -->
+      <div class="card result-full" data-cat="enfermeria">
+        <div class="rf-head" onclick="toggleExpand(this.closest('.card'))">
+          <div class="rf-icon" style="background:#d1fae5">
+            <svg viewBox="0 0 24 24" style="stroke:#059669"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div class="rf-meta">
+            <div class="rf-type">Procedimiento de Enfermería</div>
+            <div class="rf-date">10 de marzo, 2026</div>
+            <div class="rf-doctor"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg> Enf. Ignacio</div>
+            <div class="rf-badges">
+              <span class="rf-badge normal">Completado</span>
+            </div>
+          </div>
+        </div>
+        <div class="expand-body">
+          <div class="expand-inner">
+            <div class="field-group">
+              <div class="fg-label">Procedimiento</div>
+              <div class="fg-value">Curación avanzada herida pie derecho</div>
+            </div>
+            <div class="field-group">
+              <div class="fg-label">Evolución</div>
+              <div class="fg-value">Herida en fase de granulación. Bordes limpios sin signos de infección. Se realizó limpieza con NaCl 0.9%, desbridamiento superficial y cobertura con apósito hidrocoloide.</div>
+            </div>
+            <div class="expand-actions">
+              <button class="btn btn-primary" onclick="showToast('Descargando hoja de procedimiento...','📄')">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Descargar PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CITAS -->
+  <div class="page" id="tab-citas">
+    <div class="page-inner">
+      <div class="sec-head" style="margin-bottom:.85rem">
+        <h2>Mis citas</h2>
+      </div>
+
+      <!-- Calendar strip -->
+      <div class="calendar-strip" id="calStrip"></div>
+
+      <div class="sec-head">
+        <h2 style="font-size:1rem;font-family:'Figtree',sans-serif;font-style:normal;font-weight:600">Próximas</h2>
+      </div>
+
+      <div class="card appointment-card">
+        <div class="apt-head">
+          <div class="apt-time"><div class="t">10:30</div><div class="ampm">AM</div></div>
+          <div class="apt-divider-v"></div>
+          <div class="apt-info">
+            <div class="apt-type">Ecografía Abdominal</div>
+            <div class="apt-doctor">Dr. Martín Rojas</div>
+            <div class="apt-location">
+              <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Of. 408, Medio Oriente 831
+            </div>
+          </div>
+          <div class="apt-status"><span class="status-pill confirmed">Confirmada</span></div>
+        </div>
+        <div class="apt-actions">
+          <button class="btn btn-outline" onclick="showToast('Recordatorio activado','🔔')">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Recordatorio
+          </button>
+          <button class="btn btn-outline" onclick="showToast('Abriendo Maps...','📍')">Cómo llegar</button>
+          <button class="btn btn-ghost btn-danger" onclick="showToast('Solicitud de cancelación enviada','⚠️')">Cancelar</button>
+        </div>
+      </div>
+
+      <div class="sec-head" style="margin-top:.75rem">
+        <h2 style="font-size:1rem;font-family:'Figtree',sans-serif;font-style:normal;font-weight:600;color:var(--muted)">Historial</h2>
+      </div>
+
+      <div class="card appointment-card">
+        <div class="apt-head">
+          <div class="apt-time"><div class="t">11:00</div><div class="ampm">AM</div></div>
+          <div class="apt-divider-v"></div>
+          <div class="apt-info">
+            <div class="apt-type">Ecografía Partes Blandas</div>
+            <div class="apt-doctor">Dr. Martín Rojas</div>
+            <div class="apt-location">
+              <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Of. 408, Medio Oriente 831
+            </div>
+          </div>
+          <div class="apt-status"><span class="status-pill done">Realizada</span></div>
+        </div>
+      </div>
+
+      <div class="card appointment-card">
+        <div class="apt-head">
+          <div class="apt-time"><div class="t">10:00</div><div class="ampm">AM</div></div>
+          <div class="apt-divider-v"></div>
+          <div class="apt-info">
+            <div class="apt-type">Curación avanzada</div>
+            <div class="apt-doctor">Enf. Ignacio</div>
+            <div class="apt-location">
+              <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Of. 408, Medio Oriente 831
+            </div>
+          </div>
+          <div class="apt-status"><span class="status-pill done">Realizada</span></div>
+        </div>
+      </div>
+
+      <div class="new-apt-banner" onclick="showToast('Solicitud de cita enviada al centro','✅')">
+        <div class="nab-icon">📅</div>
+        <div class="nab-title">Solicitar nueva cita</div>
+        <div class="nab-sub">El centro te confirmará en horario de atención</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MENSAJES -->
+  <div class="page" id="tab-mensajes">
+    <div class="unread-banner" id="unreadBanner">💬 Tienes 1 mensaje sin leer del centro</div>
+    <div class="msg-thread">
+      <div class="msg-list" id="msgList">
+
+        <div class="msg-bubble theirs">
+          <div class="msg-sender">Centro ViñaMed</div>
+          <div class="bubble-body">Hola, le informamos que su informe de ecografía de rodilla ya está disponible en la app. Puede descargarlo desde la sección Resultados.</div>
+          <div class="bubble-meta">Hoy, 09:14</div>
+        </div>
+
+        <div class="msg-bubble mine">
+          <div class="bubble-body">Muchas gracias, ya lo pude revisar. ¿El informe dice que es normal?</div>
+          <div class="bubble-meta">Hoy, 09:45</div>
+        </div>
+
+        <div class="msg-bubble theirs">
+          <div class="msg-sender">Centro ViñaMed</div>
+          <div class="bubble-body">Sí, el informe no muestra hallazgos patológicos significativos. Sus estructuras están conservadas. Si tiene dudas clínicas, puede consultarlas con su médico tratante.</div>
+          <div class="bubble-meta">Hoy, 10:02</div>
+        </div>
+
+        <div class="msg-bubble theirs">
+          <div class="msg-sender">Centro ViñaMed</div>
+          <div class="bubble-body">Le recordamos que tiene una cita agendada para el miércoles 9 de abril a las 10:30. ¿Confirma su asistencia?</div>
+          <div class="bubble-meta">Hoy, 10:05 · Sin leer</div>
+        </div>
+
+      </div>
+      <div class="msg-input-wrap">
+        <textarea class="msg-input" id="msgInput" placeholder="Escribe tu consulta..." rows="1" oninput="autoResize(this)" onkeydown="msgKeydown(event)"></textarea>
+        <button class="btn-send" onclick="sendMsg()">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERFIL -->
+  <div class="page" id="tab-perfil">
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar">A</div>
+      <div class="profile-name" id="profileName">Ana Ramírez</div>
+      <div class="profile-rut" id="profileRut">17.543.210-K</div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-card">
+        <div class="profile-row">
+          <div class="pr-icon" style="background:#e0f2fe"><svg viewBox="0 0 24 24" style="stroke:#0891b2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <div class="pr-label">Fecha de nacimiento</div>
+          <div class="pr-value">15/08/1987</div>
+        </div>
+        <div class="profile-row">
+          <div class="pr-icon" style="background:#f3e8ff"><svg viewBox="0 0 24 24" style="stroke:#7c3aed"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12"/><path d="M1.63 3.18A2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72"/></svg></div>
+          <div class="pr-label">Teléfono</div>
+          <div class="pr-value">+56 9 8765 4321</div>
+        </div>
+        <div class="profile-row">
+          <div class="pr-icon" style="background:#fef3c7"><svg viewBox="0 0 24 24" style="stroke:#d97706"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div class="pr-label">Correo</div>
+          <div class="pr-value">ana@correo.cl</div>
+        </div>
+        <div class="profile-row" onclick="showToast('Editando datos de contacto...','✏️')">
+          <div class="pr-icon" style="background:#f1f5f9"><svg viewBox="0 0 24 24" style="stroke:var(--muted)"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+          <div class="pr-label">Editar datos de contacto</div>
+          <div class="pr-arrow">›</div>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <div class="profile-row" onclick="showToast('3 atenciones registradas','📋')">
+          <div class="pr-icon" style="background:#e0f2fe"><svg viewBox="0 0 24 24" style="stroke:#0891b2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div class="pr-label">Historial de atenciones</div>
+          <div class="pr-value">3 registros</div>
+          <div class="pr-arrow">›</div>
+        </div>
+        <div class="profile-row" onclick="showToast('Sin alergias registradas','✅')">
+          <div class="pr-icon" style="background:#fef3c7"><svg viewBox="0 0 24 24" style="stroke:#d97706"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div class="pr-label">Alergias registradas</div>
+          <div class="pr-value">Ninguna</div>
+          <div class="pr-arrow">›</div>
+        </div>
+        <div class="profile-row" onclick="showToast('Abriendo configuración...','⚙️')">
+          <div class="pr-icon" style="background:#f1f5f9"><svg viewBox="0 0 24 24" style="stroke:var(--muted)"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33"/></svg></div>
+          <div class="pr-label">Configuración</div>
+          <div class="pr-arrow">›</div>
+        </div>
+      </div>
+
+      <div class="profile-card" style="margin-bottom:1.5rem">
+        <div class="profile-row">
+          <div class="pr-icon" style="background:#f1f5f9"><svg viewBox="0 0 24 24" style="stroke:var(--muted)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="pr-label">Versión de la app</div>
+          <div class="pr-value">1.0.0-demo</div>
+        </div>
+      </div>
+
+      <button class="logout-btn" onclick="doLogout()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar sesión
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<!-- ══════════════════ BOTTOM NAV ══════════════════ -->
+<nav class="bottom-nav" id="bottomNav" style="display:none">
+  <div class="nav-tab active" id="nt-home" onclick="showTab('home')">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Inicio</span>
+    <div class="tab-dot"></div>
+  </div>
+  <div class="nav-tab" id="nt-resultados" onclick="showTab('resultados')">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    <span>Resultados</span>
+    <div class="tab-dot"></div>
+  </div>
+  <div class="nav-tab" id="nt-citas" onclick="showTab('citas')">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span>Citas</span>
+    <div class="tab-dot"></div>
+  </div>
+  <div class="nav-tab" id="nt-mensajes" onclick="showTab('mensajes')">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span>Mensajes</span>
+    <div class="tab-dot"></div>
+  </div>
+  <div class="nav-tab" id="nt-perfil" onclick="showTab('perfil')">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Perfil</span>
+    <div class="tab-dot"></div>
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span id="toastIcon">✅</span>
+  <span id="toastMsg">Mensaje</span>
+  <div class="toast-bar"></div>
+</div>
+
+<script>
+// ─── DEMO DATA ────────────────────────────────────────────
+const DEMO_USERS = {
+  'cualquier': { name:'Ana Ramírez', initials:'AR', rut:'17.543.210-K' },
+};
+const DEMO_CODE = '123456';
+
+let currentUser = null;
+let unreadMsgs = 1;
+
+// ─── LOGIN ────────────────────────────────────────────────
+function fillDemo(rut, code) {
+  document.getElementById('loginRut').value = rut;
+  document.getElementById('loginCode').value = code;
+}
+
+function doLogin() {
+  const rut  = document.getElementById('loginRut').value.trim();
+  const code = document.getElementById('loginCode').value.trim();
+  if (!rut) { showToast('Ingresa tu RUT','⚠️'); return; }
+  if (code !== DEMO_CODE) { showToast('Código incorrecto. Demo: 123456','⚠️'); return; }
+
+  // pick demo user by RUT or fallback
+  const knownUsers = {
+    '17.543.210-K': { name:'Ana Ramírez',     initials:'AR', rut:'17.543.210-K' },
+    '10.234.567-8': { name:'María González',   initials:'MG', rut:'10.234.567-8' },
+  };
+  currentUser = knownUsers[rut] || { name:'Paciente', initials:rut.slice(0,2).toUpperCase(), rut };
+
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appHeader').style.display = 'flex';
+  document.getElementById('appMain').style.display = 'block';
+  document.getElementById('bottomNav').style.display = 'flex';
+
+  const firstName = currentUser.name.split(' ')[0];
+  document.getElementById('headerName').textContent = firstName;
+  document.getElementById('headerAvatar').textContent = currentUser.initials;
+  document.getElementById('profileAvatar').textContent = currentUser.initials;
+  document.getElementById('profileName').textContent = currentUser.name;
+  document.getElementById('profileRut').textContent = currentUser.rut;
+
+  buildCalendar();
+  setTimeout(() => showToast(`Bienvenida, ${firstName}`,'👋'), 300);
+}
+
+function doLogout() {
+  currentUser = null;
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('appHeader').style.display = 'none';
+  document.getElementById('appMain').style.display = 'none';
+  document.getElementById('bottomNav').style.display = 'none';
+  showTab('home');
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const page = document.getElementById('tab-' + id);
+  const tab  = document.getElementById('nt-' + id);
+  if (page) page.classList.add('active');
+  if (tab)  tab.classList.add('active');
+  if (id === 'mensajes') clearUnread();
+  window.scrollTo(0, 0);
+}
+
+function clearUnread() {
+  unreadMsgs = 0;
+  document.getElementById('notifDot').style.display = 'none';
+  document.getElementById('unreadBanner').style.display = 'none';
+  document.getElementById('msgCount').textContent = 'Sin mensajes nuevos';
+}
+
+// ─── RESULTS ─────────────────────────────────────────────
+function toggleResult(card) {
+  const preview = card.querySelector('.rc-preview');
+  if (preview) preview.classList.toggle('open');
+}
+
+function toggleExpand(card) {
+  const body = card.querySelector('.expand-body');
+  if (body) body.classList.toggle('open');
+}
+
+function filterResults(chip, cat) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  document.querySelectorAll('.result-full').forEach(card => {
+    if (cat === 'todos' || card.dataset.cat === cat) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+// ─── CALENDAR ────────────────────────────────────────────
+function buildCalendar() {
+  const strip = document.getElementById('calStrip');
+  strip.innerHTML = '';
+  const today = new Date();
+  const dows  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const hasEvent = [3]; // index 3 = miércoles = 4 días desde hoy
+
+  for (let i = -2; i <= 10; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    const el = document.createElement('div');
+    el.className = 'cal-day' + (i === 0 ? ' today active' : '') + (i === 3 ? ' has-event' : '');
+    el.innerHTML = `<div class="dow">${dows[d.getDay()]}</div><div class="dom">${d.getDate()}</div><div class="dot"></div>`;
+    el.onclick = () => {
+      document.querySelectorAll('.cal-day').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+    };
+    strip.appendChild(el);
+  }
+}
+
+// ─── MESSAGING ───────────────────────────────────────────
+function sendMsg() {
+  const input = document.getElementById('msgInput');
+  const text  = input.value.trim();
+  if (!text) return;
+  const list = document.getElementById('msgList');
+  const now  = new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble mine';
+  bubble.innerHTML = `<div class="bubble-body">${text}</div><div class="bubble-meta">Hoy, ${now}</div>`;
+  list.appendChild(bubble);
+  input.value = '';
+  input.style.height = 'auto';
+  list.scrollTop = list.scrollHeight;
+  // Auto reply
+  setTimeout(() => {
+    const reply = document.createElement('div');
+    reply.className = 'msg-bubble theirs';
+    reply.innerHTML = `<div class="msg-sender">Centro ViñaMed</div><div class="bubble-body">Gracias por su mensaje. El equipo del centro le responderá en horario de atención (Lun–Vie, 9:00–18:00).</div><div class="bubble-meta">Hoy, ${now}</div>`;
+    list.appendChild(reply);
+    list.scrollTop = list.scrollHeight;
+  }, 1200);
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function msgKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+}
+
+// ─── TOAST ───────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, icon = '✅') {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toastIcon').textContent = icon;
+  t.classList.add('show');
+  const bar = t.querySelector('.toast-bar');
+  bar.style.animation = 'none'; bar.offsetHeight;
+  bar.style.animation = '';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ─── PWA ─────────────────────────────────────────────────
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e;
+});
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw-paciente.js').catch(() => {});
+}
+
+// ─── INIT ────────────────────────────────────────────────
+// Pre-fill for quick demo access
+document.getElementById('loginRut').value   = '17.543.210-K';
+document.getElementById('loginCode').value  = '123456';
+</script>
+</body>
+</html>
