@@ -1,5 +1,5 @@
 const CACHE = 'vinamed-paciente-v1';
-const ASSETS = ['./paciente.html','./manifest-paciente.json','./logo_vinamed.png'];
+const ASSETS = ['/','./manifest-paciente.json','./logo_vinamed.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
