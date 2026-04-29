@@ -1381,7 +1381,7 @@ function PasoPrestacion({ onSeleccionar }) {
         </div>
       </div>
 
-      <div style={{ flex:1, overflowY:'auto', paddingBottom:20 }} className="hide-scrollbar">
+      <div style={{ flex:1, paddingBottom:40 }} className="hide-scrollbar">
         {Object.entries(porGrupo).map(([grupo, items]) => (
           <div key={grupo} style={{ marginBottom:20 }}>
             <p style={{ fontSize:11, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'.08em', marginBottom:10, marginLeft:4 }}>
@@ -1395,11 +1395,11 @@ function PasoPrestacion({ onSeleccionar }) {
                   style={{ 
                     display:'flex', alignItems:'center', gap:12, padding:'14px 16px', borderRadius:14, 
                     border:'1px solid #f1f5f9', background:'#fff', textAlign:'left', cursor:'pointer',
-                    transition:'all .2s var(--ease)'
+                    transition:'all .2s var(--ease)', width:'100%'
                   }}
                   className="service-btn"
                 >
-                  <div style={{ width:32, height:32, borderRadius:10, background:'#ecfeff', color:'#0891b2', display:'flex', alignItems:'center', justifyCenter:'center', flexShrink:0 }}>
+                  <div style={{ width:32, height:32, borderRadius:10, background:'#ecfeff', color:'#0891b2', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                     <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                   </div>
                   <span style={{ fontSize:14, fontWeight:600, color:'#334155', flex:1 }}>{p.label}</span>
@@ -1714,7 +1714,14 @@ function BottomSheet({ onCerrar, onExito }) {
     <div onClick={e => { if (e.target===e.currentTarget) cerrar(); }}
       style={{ position:'fixed', inset:0, zIndex:10000, background:'rgba(0,0,0,0.45)', backdropFilter:'blur(4px)', WebkitBackdropFilter:'blur(4px)', display:'flex', flexDirection:'column', justifyContent:'flex-end', opacity:visible?1:0, transition:'opacity 0.28s ease' }}>
 
-      <div style={{ background:'#fff', borderRadius:'20px 20px 0 0', maxHeight:'92dvh', display:'flex', flexDirection:'column', overflow:'hidden', transform:visible?`translateY(${dragY}px)`:'translateY(100%)', transition:dragY>0?'transform 0s':'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)', paddingBottom:'env(safe-area-inset-bottom, 16px)' }}>
+      <div style={{ 
+        background:'#fff', borderRadius:'20px 20px 0 0', 
+        height:'88dvh', maxHeight:'88dvh',
+        display:'flex', flexDirection:'column', overflow:'hidden', 
+        transform:visible?`translateY(${dragY}px)`:'translateY(100%)', 
+        transition:dragY>0?'transform 0s':'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)', 
+        paddingBottom:'env(safe-area-inset-bottom, 24px)' 
+      }}>
 
         {/* Drag handle — touch solo en el handle */}
         <div style={{ display:'flex', justifyContent:'center', padding:'12px 0 4px', touchAction:'none', flexShrink:0, cursor:'grab' }}
