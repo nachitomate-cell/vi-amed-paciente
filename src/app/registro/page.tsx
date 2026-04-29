@@ -461,49 +461,86 @@ function Paso3({ form, errores, update, errorGral }: any) {
 }
 
 function Paso4({ aceptaPoliticas, setAceptaPoliticas, aceptaConsentimiento, setAceptaConsentimiento, errorGral }: any) {
+  const [verPoliticas, setVerPoliticas] = useState(false);
+  const [verConsent, setVerConsent] = useState(false);
+
   return (
     <>
       <p style={{ fontSize:15, fontWeight:500, color:'#fff', margin:'0 0 16px' }}>Términos y Condiciones</p>
       
-      <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
-        <label style={{ display:'flex', gap:10, cursor:'pointer' }}>
+      <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+        <div style={{ display:'flex', gap:10 }}>
           <input 
+            id="chk-pol"
             type="checkbox" 
             checked={aceptaPoliticas} 
             onChange={e => setAceptaPoliticas(e.target.checked)}
-            style={{ width:18, height:18, marginTop:2 }}
+            style={{ width:20, height:20, marginTop:2, flexShrink:0, cursor:'pointer' }}
           />
-          <span style={{ fontSize:13, color:'rgba(255,255,255,0.8)', lineHeight:1.4 }}>
-            He leído y acepto la <strong>Política de Privacidad</strong> y manejo de datos personales.
-          </span>
-        </label>
+          <label htmlFor="chk-pol" style={{ fontSize:13, color:'rgba(255,255,255,0.8)', lineHeight:1.4, cursor:'pointer' }}>
+            He leído y acepto la <button type="button" onClick={() => setVerPoliticas(true)} style={{ background:'none', border:'none', color:'#fff', padding:0, textDecoration:'underline', cursor:'pointer', fontWeight:600 }}>Política de Privacidad</button> y manejo de datos personales.
+          </label>
+        </div>
 
-        <label style={{ display:'flex', gap:10, cursor:'pointer' }}>
+        <div style={{ display:'flex', gap:10 }}>
           <input 
+            id="chk-con"
             type="checkbox" 
             checked={aceptaConsentimiento} 
             onChange={e => setAceptaConsentimiento(e.target.checked)}
-            style={{ width:18, height:18, marginTop:2 }}
+            style={{ width:20, height:20, marginTop:2, flexShrink:0, cursor:'pointer' }}
           />
-          <span style={{ fontSize:13, color:'rgba(255,255,255,0.8)', lineHeight:1.4 }}>
-            Acepto el <strong>Consentimiento Informado</strong> para el uso del Portal del Paciente y telemedicina.
-          </span>
-        </label>
+          <label htmlFor="chk-con" style={{ fontSize:13, color:'rgba(255,255,255,0.8)', lineHeight:1.4, cursor:'pointer' }}>
+            Acepto el <button type="button" onClick={() => setVerConsent(true)} style={{ background:'none', border:'none', color:'#fff', padding:0, textDecoration:'underline', cursor:'pointer', fontWeight:600 }}>Consentimiento Informado</button> para el uso del Portal del Paciente y telemedicina.
+          </label>
+        </div>
       </div>
 
-      <div style={{
-        marginTop:16,
-        background:'rgba(255,255,255,0.06)',
-        border:'1px solid rgba(255,255,255,0.1)',
-        borderRadius:10, padding:'12px',
-        maxHeight: 120, overflowY: 'auto'
-      }} className="hide-scrollbar">
-        <p style={{ fontSize:11, color:'rgba(255,255,255,0.5)', margin:0, lineHeight:1.5 }}>
-          <strong>Resumen legal:</strong> ViñaMed se compromete a proteger sus datos según la Ley 19.628. 
-          Al registrarse, usted autoriza el almacenamiento de su ficha clínica digital y la recepción 
-          de notificaciones relacionadas con su salud. Puede revocar este consentimiento en cualquier momento.
-        </p>
-      </div>
+      {/* Modal para Políticas */}
+      {verPoliticas && (
+        <div style={{ position:'fixed', inset:0, zIndex:1000, background:'rgba(0,0,0,0.8)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
+          <div style={{ background:'#fff', borderRadius:20, width:'100%', maxWidth:500, maxHeight:'80vh', display:'flex', flexDirection:'column', overflow:'hidden' }}>
+            <div style={{ padding:20, borderBottom:'1px solid #eee', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+              <p style={{ margin:0, fontWeight:700, color:'#0f172a' }}>Política de Privacidad</p>
+              <button onClick={() => setVerPoliticas(false)} style={{ background:'none', border:'none', fontSize:20, cursor:'pointer' }}>×</button>
+            </div>
+            <div style={{ padding:20, overflowY:'auto', fontSize:13, lineHeight:1.6, color:'#475569' }}>
+              <p><strong>1. Uso de Datos:</strong> ViñaMed utiliza sus datos personales exclusivamente para fines de atención de salud, agendamiento y entrega de resultados clínicos.</p>
+              <p><strong>2. Seguridad:</strong> Aplicamos estándares de cifrado TLS y control de acceso restringido conforme a la Ley 19.628 sobre Protección de la Vida Privada.</p>
+              <p><strong>3. Derechos:</strong> Usted tiene derecho de acceso, rectificación y cancelación de sus datos personales en cualquier momento.</p>
+              <p><strong>4. Almacenamiento:</strong> Los registros clínicos se mantienen por el tiempo legal estipulado por el MINSAL.</p>
+            </div>
+            <div style={{ padding:16, borderTop:'1px solid #eee', textAlign:'right' }}>
+              <button onClick={() => setVerPoliticas(false)} style={{ padding:'8px 20px', borderRadius:10, border:'none', background:'#0E7490', color:'#fff', fontWeight:600, cursor:'pointer' }}>Entendido</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para Consentimiento */}
+      {verConsent && (
+        <div style={{ position:'fixed', inset:0, zIndex:1000, background:'rgba(0,0,0,0.8)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
+          <div style={{ background:'#fff', borderRadius:20, width:'100%', maxWidth:500, maxHeight:'80vh', display:'flex', flexDirection:'column', overflow:'hidden' }}>
+            <div style={{ padding:20, borderBottom:'1px solid #eee', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+              <p style={{ margin:0, fontWeight:700, color:'#0f172a' }}>Consentimiento Informado</p>
+              <button onClick={() => setVerConsent(false)} style={{ background:'none', border:'none', fontSize:20, cursor:'pointer' }}>×</button>
+            </div>
+            <div style={{ padding:20, overflowY:'auto', fontSize:13, lineHeight:1.6, color:'#475569' }}>
+              <p>Al aceptar este consentimiento, usted declara comprender y autorizar:</p>
+              <ul>
+                <li>El uso de la plataforma digital para la visualización de sus exámenes médicos.</li>
+                <li>La recepción de notificaciones vía correo electrónico y/o SMS.</li>
+                <li>La modalidad de telemedicina si corresponde a su atención, aceptando las limitaciones técnicas del medio digital.</li>
+                <li>La veracidad de los datos entregados en este registro.</li>
+              </ul>
+              <p>Este consentimiento puede ser revocado mediante solicitud formal en el centro médico.</p>
+            </div>
+            <div style={{ padding:16, borderTop:'1px solid #eee', textAlign:'right' }}>
+              <button onClick={() => setVerConsent(false)} style={{ padding:'8px 20px', borderRadius:10, border:'none', background:'#0E7490', color:'#fff', fontWeight:600, cursor:'pointer' }}>Entendido</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {errorGral && (
         <div style={{
