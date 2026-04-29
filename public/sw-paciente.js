@@ -9,9 +9,27 @@ self.addEventListener('activate', e => {
 });
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+  
+  // No interceptar peticiones de otros dominios (ej: Firebase)
+  if (!e.request.url.startsWith(self.location.origin)) return;
+
   e.respondWith(
     caches.match(e.request).then(cached => {
-      return cached || fetch(e.request).catch(() => caches.match('/'));
+      if (cached) return cached;
+      
+      return fetch(e.request).then(response => {
+        // No cachear si la respuesta no es válida o es opaca
+        if (!response || response.status !== 200 || response.type !== 'basic') {
+          return response;
+        }
+        return response;
+      }).catch(() => {
+        // Fallback solo para navegaciones
+        if (e.request.mode === 'navigate') {
+          return caches.match('/');
+        }
+        return null;
+      });
     })
   );
 });
