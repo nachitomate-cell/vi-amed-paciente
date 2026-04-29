@@ -2141,55 +2141,117 @@ function ResultadosApp() {
 
 // ── Componentes de Perfil (React) ──────────────────────────────────────────
 
-function BottomSheetGeneric({ titulo, onCerrar, children }) {
-  const [visible, setVisible] = useState(false);
-  const [dragY, setDragY] = useState(0);
-  const startY = React.useRef(0);
-
-  useEffect(() => {
-    setVisible(true);
+function BottomSheetGeneric({ titulo, subtitulo, onCerrar, children, progress }) {
+  const [animar, setAnimar] = useState(false);
+  useEffect(() => { 
+    requestAnimationFrame(() => setAnimar(true));
   }, []);
 
   function cerrar() {
-    setVisible(false);
+    setAnimar(false);
     setTimeout(onCerrar, 300);
   }
 
-  function onTouchStart(e) { startY.current = e.touches[0].clientY; }
-  function onTouchMove(e) {
-    const d = e.touches[0].clientY - startY.current;
-    if (d > 0) setDragY(d);
-  }
-  function onTouchEnd() {
-    if (dragY > 100) cerrar();
-    else setDragY(0);
-  }
-
   return (
-    <div onClick={e => { if (e.target===e.currentTarget) cerrar(); }}
-      style={{ position:'fixed', inset:0, zIndex:10000, background:'rgba(0,0,0,0.45)', backdropFilter:'blur(4px)', WebkitBackdropFilter:'blur(4px)', display:'flex', flexDirection:'column', justifyContent:'flex-end', opacity:visible?1:0, transition:'opacity 0.28s ease' }}>
+    <>
+      {/* Contenedor overlay (fondo oscuro) */}
+      <div style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.45)',
+        zIndex: 10000,
+        opacity: animar ? 1 : 0,
+        transition: 'opacity 0.28s ease',
+        touchAction: 'none',
+        backdropFilter: 'blur(4px)',
+      }} onClick={cerrar} />
 
-      <div style={{ background:'#fff', borderRadius:'20px 20px 0 0', maxHeight:'92dvh', display:'flex', flexDirection:'column', overflow:'hidden', transform:visible?`translateY(${dragY}px)`:'translateY(100%)', transition:dragY>0?'transform 0s':'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)', paddingBottom:'env(safe-area-inset-bottom, 16px)' }}>
-
-        <div style={{ display:'flex', justifyContent:'center', padding:'12px 0 4px', touchAction:'none', flexShrink:0, cursor:'grab' }}
-          onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
-          <div style={{ width:36, height:4, background:'#D1D5DB', borderRadius:2 }} />
+      {/* El sheet en sí */}
+      <div style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 10001,
+        background: 'var(--color-background-primary)',
+        borderRadius: '20px 20px 0 0',
+        height: '96svh',
+        maxHeight: '96svh',
+        display: 'flex',
+        flexDirection: 'column',
+        transform: animar ? 'translateY(0)' : 'translateY(100%)',
+        transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        paddingBottom: 'env(safe-area-inset-bottom, 20px)',
+        overflow: 'hidden',
+      }}>
+        {/* Drag handle */}
+        <div style={{
+          flexShrink: 0,
+          padding: '12px 0 4px',
+          display: 'flex',
+          justifyContent: 'center',
+          cursor: 'grab',
+          touchAction: 'none',
+        }}>
+          <div style={{
+            width: 36,
+            height: 4,
+            borderRadius: 2,
+            background: 'var(--color-border-secondary)',
+          }} />
         </div>
 
-        <div style={{ display:'flex', alignItems:'center', padding:'0 20px 14px', borderBottom:'1px solid #F3F4F6', flexShrink:0 }}>
-          <div style={{ flex:1 }}>
-            <p style={{ margin:0, fontSize:16, fontWeight:700, color:'#0f172a' }}>{titulo}</p>
+        {/* Header fijo */}
+        <div style={{
+          flexShrink: 0,
+          padding: '0 20px 14px',
+          textAlign: 'center',
+          position: 'relative',
+          borderBottom: '1px solid var(--color-border-tertiary)',
+        }}>
+          <p style={{ fontSize: 16, fontWeight: 700,
+                      color: 'var(--color-text-primary)', margin: '0' }}>
+            {titulo}
+          </p>
+          {subtitulo && (
+            <p style={{ fontSize: 12, color: 'var(--color-text-tertiary)', margin: '2px 0 0' }}>
+              {subtitulo}
+            </p>
+          )}
+          {/* Boton cerrar */}
+          <button onClick={cerrar} style={{
+            position: 'absolute', right: 16, top: -4,
+            background: 'none',
+            border: 'none', borderRadius: '50%',
+            width: 32, height: 32,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', fontSize: 18,
+            color: 'var(--color-text-tertiary)',
+          }}>X</button>
+        </div>
+
+        {/* Barra de progreso */}
+        {progress && (
+          <div style={{ flexShrink: 0, padding: '12px 20px 0' }}>
+            {progress}
           </div>
-          <button onClick={cerrar} style={{ background:'none', border:'none', cursor:'pointer', padding:4, color:'#9CA3AF', display:'flex', alignItems:'center', width:28, height:28, borderRadius:'50%', justifyContent:'center' }}>
-            <svg viewBox="0 0 24 24" style={{ width:16, height:16, stroke:'currentColor', fill:'none', strokeWidth:2, strokeLinecap:'round' }}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        </div>
+        )}
 
-        <div style={{ padding:'18px 20px 24px', flex:1, overflowY:'auto', display:'flex', flexDirection:'column', minHeight:0 }}>
+        {/* Contenido scrolleable */}
+        <div style={{
+          flex: 1,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          padding: '16px 20px',
+          WebkitOverflowScrolling: 'touch',
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: 0,
+        }}>
           {children}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
