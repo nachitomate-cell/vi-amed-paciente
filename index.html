@@ -604,15 +604,15 @@ main {
 
       <div class="hero-card">
         <div class="hero-label">Tu próxima atención</div>
-        <div class="hero-title">Ecografía<br>Abdominal</div>
-        <div class="hero-sub">Tienes una cita agendada para esta semana en ViñaMed</div>
+        <div class="hero-title" id="hero-cita-tipo">Ecografía<br>Abdominal</div>
+        <div class="hero-sub" id="hero-cita-sub">Tienes una cita agendada para esta semana en ViñaMed</div>
         <div class="hero-next" onclick="showTab('citas')">
           <div class="hero-next-icon">
             <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           </div>
           <div class="hero-next-text">
             <div class="lbl">Próxima cita</div>
-            <div class="val">Mié 9 de abril · 10:30</div>
+            <div class="val" id="hero-cita-fecha">Buscando...</div>
           </div>
           <div class="hero-next-arrow">›</div>
         </div>
@@ -1797,14 +1797,21 @@ function TarjetaCita({ cita, delay }) {
 
 // ── Calendario horizontal (React) ──────────────────────────────────────────
 
-function CalendarioReact() {
+function CalendarioReact({ citas = [] }) {
   const hoy  = new Date();
   const DOWS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
   const [activo, setActivo] = useState(0);
+  
+  const fechasConCita = new Set(citas.map(c => {
+    const d = c.fecha.toDate();
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  }));
+
   const dias = [];
   for (let i = -2; i <= 10; i++) {
     const d = new Date(hoy); d.setDate(hoy.getDate() + i);
-    dias.push({ i, dom:d.getDate(), dow:DOWS[d.getDay()], esHoy:i===0, tieneEvento:i===3 });
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    dias.push({ i, dom:d.getDate(), dow:DOWS[d.getDay()], esHoy:i===0, tieneEvento: fechasConCita.has(key) });
   }
   return (
     <div style={{ display:'flex', gap:'.5rem', overflowX:'auto', padding:'.25rem .1rem .75rem', marginBottom:'1rem', scrollSnapType:'x mandatory', WebkitOverflowScrolling:'touch', msOverflowStyle:'none', scrollbarWidth:'none' }}>
@@ -1862,7 +1869,7 @@ function CitasApp() {
     <div className="page-inner">
       <div className="sec-head" style={{ marginBottom:'.85rem' }}><h2>Mis citas</h2></div>
 
-      <CalendarioReact />
+      <CalendarioReact citas={citas} />
 
       {proximas.length > 0 && (
         <>
@@ -2697,7 +2704,61 @@ function mostrarApp() {
   }
 
   buildCalendar();
+  actualizarProximaCita();
   setTimeout(() => showToast(`Bienvenida, ${firstName}`,'👋'), 300);
+}
+
+async function actualizarProximaCita() {
+  const titleEl = document.getElementById('hero-cita-tipo');
+  const subEl   = document.getElementById('hero-cita-sub');
+  const dateEl  = document.getElementById('hero-cita-fecha');
+  const rut     = window.currentUser?.rut;
+
+  if (!window._db || !rut) {
+    if (dateEl) dateEl.textContent = 'Sin citas próximas';
+    return;
+  }
+
+  try {
+    // Normalizar RUT para la consulta (el mismo formato que usa el dashboard)
+    const formattedRut = rut.replace(/\./g, '').toUpperCase();
+
+    const q = window._db.collection('citas')
+      .where('pacienteRut', '==', formattedRut)
+      .where('estado', 'in', ['solicitada', 'confirmada'])
+      .where('fecha', '>=', firebase.firestore.Timestamp.now())
+      .orderBy('fecha', 'asc')
+      .limit(1);
+
+    const snap = await q.get();
+
+    if (snap.empty) {
+      titleEl.innerHTML = 'Sin citas<br>pendientes';
+      subEl.textContent = 'No tienes citas agendadas próximamente';
+      dateEl.textContent = 'Agenda una hora';
+      return;
+    }
+
+    const cita = snap.docs[0].data();
+    const fecha = cita.fecha.toDate();
+    
+    // Formatear fecha: "Mié 9 de abril · 10:30"
+    const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    
+    const dow = dias[fecha.getDay()];
+    const dom = fecha.getDate();
+    const mes = meses[fecha.getMonth()];
+    const hora = fecha.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+
+    titleEl.textContent = cita.tipoAtencion;
+    subEl.textContent = `Cita con ${cita.profesionalNombre || 'especialista'} en ViñaMed`;
+    dateEl.textContent = `${dow} ${dom} de ${mes} · ${hora}`;
+
+  } catch (err) {
+    console.error('Error actualizando próxima cita:', err);
+    if (dateEl) dateEl.textContent = 'Error al cargar';
+  }
 }
 
 function doLogout() {

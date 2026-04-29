@@ -9,5 +9,9 @@ self.addEventListener('activate', e => {
 });
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
-  e.respondWith(caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('./paciente.html'))));
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      return cached || fetch(e.request).catch(() => caches.match('/'));
+    })
+  );
 });
