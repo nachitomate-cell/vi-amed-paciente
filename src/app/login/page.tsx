@@ -1,11 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { loginConEmail } from '@/lib/auth';
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [verPass, setVerPass] = useState(false);
@@ -37,7 +35,7 @@ export default function LoginPage() {
     setCargando(true);
     try {
       await loginConEmail(emailTrim, password);
-      router.push('/portal');
+      window.location.href = '/portal';
     } catch (e: any) {
       setErrorGral(e?.message || 'No se pudo iniciar sesión. Intenta de nuevo.');
     } finally {
@@ -275,11 +273,9 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <style jsx global>{`
+      <style>{`
         @keyframes spin {
-          to {
-            transform: rotate(360deg);
-          }
+          to { transform: rotate(360deg); }
         }
       `}</style>
     </div>
