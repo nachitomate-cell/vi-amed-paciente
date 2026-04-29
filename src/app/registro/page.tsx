@@ -312,8 +312,9 @@ const inputStyle: React.CSSProperties = {
   width:'100%', padding:'13px 16px', borderRadius:12,
   border:'1.5px solid rgba(255,255,255,0.2)',
   background:'rgba(255,255,255,0.12)', color:'#fff',
-  fontSize:15, outline:'none', boxSizing:'border-box',
+  fontSize:16, outline:'none', boxSizing:'border-box',
   transition: 'all 0.2s ease',
+  WebkitAppearance: 'none',
 };
 
 function Paso1({ form, errores, update }: any) {

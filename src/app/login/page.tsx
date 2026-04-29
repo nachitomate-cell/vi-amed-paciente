@@ -34,7 +34,8 @@ export default function LoginPage() {
 
     setCargando(true);
     try {
-      await loginConEmail(emailTrim, password);
+      const user = await loginConEmail(emailTrim, password);
+      localStorage.setItem('paciente_uid', user.uid);
       window.location.href = '/portal';
     } catch (e: any) {
       setErrorGral(e?.message || 'No se pudo iniciar sesión. Intenta de nuevo.');
@@ -134,11 +135,12 @@ export default function LoginPage() {
                 border: '1.5px solid rgba(255,255,255,0.2)',
                 borderRadius: 12,
                 padding: '13px 16px',
-                fontSize: 15,
+                fontSize: 16,
                 color: '#fff',
                 outline: 'none',
                 boxSizing: 'border-box',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                WebkitAppearance: 'none'
               }}
           />
           {errorEmail && (
@@ -158,11 +160,12 @@ export default function LoginPage() {
               border: '1.5px solid rgba(255,255,255,0.2)',
               borderRadius: 12,
               padding: '13px 44px 13px 16px',
-              fontSize: 15,
+              fontSize: 16,
               color: '#fff',
               outline: 'none',
               boxSizing: 'border-box',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.2s ease',
+              WebkitAppearance: 'none'
             }}
           />
           <button
