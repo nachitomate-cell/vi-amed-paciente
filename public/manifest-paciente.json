@@ -11,8 +11,8 @@
   "lang": "es-CL",
   "categories": ["medical", "health"],
   "icons": [
-    { "src": "logo_vinamed.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "logo_vinamed.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "logo1.jpg", "sizes": "192x192", "type": "image/jpeg", "purpose": "any maskable" },
+    { "src": "logo1.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "any maskable" }
   ],
   "shortcuts": [
     { "name": "Mis resultados", "short_name": "Resultados", "url": "./paciente.html#resultados" },
