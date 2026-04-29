@@ -128,17 +128,18 @@ export default function LoginPage() {
           placeholder="tucorreo@dominio.cl"
           type="email"
           inputMode="email"
-            style={{
-              width: '100%',
-              background: 'rgba(255,255,255,0.08)',
-              border: '1px solid rgba(255,255,255,0.15)',
-              borderRadius: 12,
-              padding: '13px 16px',
-              fontSize: 15,
-              color: '#fff',
-              outline: 'none',
-              boxSizing: 'border-box'
-            }}
+              style={{
+                width: '100%',
+                background: 'rgba(255,255,255,0.12)',
+                border: '1.5px solid rgba(255,255,255,0.2)',
+                borderRadius: 12,
+                padding: '13px 16px',
+                fontSize: 15,
+                color: '#fff',
+                outline: 'none',
+                boxSizing: 'border-box',
+                transition: 'all 0.2s ease'
+              }}
           />
           {errorEmail && (
             <p style={{ fontSize: 11, color: 'rgba(239,68,68,0.85)', margin: '4px 0 0' }}>{errorEmail}</p>
@@ -153,14 +154,15 @@ export default function LoginPage() {
             placeholder="Contraseña"
             style={{
               width: '100%',
-              background: 'rgba(255,255,255,0.08)',
-              border: '1px solid rgba(255,255,255,0.15)',
+              background: 'rgba(255,255,255,0.12)',
+              border: '1.5px solid rgba(255,255,255,0.2)',
               borderRadius: 12,
               padding: '13px 44px 13px 16px',
               fontSize: 15,
               color: '#fff',
               outline: 'none',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
+              transition: 'all 0.2s ease'
             }}
           />
           <button

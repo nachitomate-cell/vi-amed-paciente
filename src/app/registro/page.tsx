@@ -296,9 +296,9 @@ function Campo({ label, error, children }: {
 }) {
   return (
     <div style={{ marginBottom: 14 }}>
-      <p style={{ fontSize:11, color:'rgba(255,255,255,0.55)',
-                  textTransform:'uppercase', letterSpacing:'.05em',
-                  margin:'0 0 5px' }}>{label}</p>
+      <p style={{ fontSize:11, color:'rgba(255,255,255,0.75)',
+                  textTransform:'uppercase', letterSpacing:'.08em',
+                  fontWeight: 700, margin:'0 0 6px' }}>{label}</p>
       {children}
       {error && (
         <p style={{ fontSize:11, color:'rgba(239,68,68,0.9)',
@@ -309,10 +309,11 @@ function Campo({ label, error, children }: {
 }
 
 const inputStyle: React.CSSProperties = {
-  width:'100%', padding:'12px 14px', borderRadius:10,
-  border:'1px solid rgba(255,255,255,0.15)',
-  background:'rgba(255,255,255,0.08)', color:'#fff',
+  width:'100%', padding:'13px 16px', borderRadius:12,
+  border:'1.5px solid rgba(255,255,255,0.2)',
+  background:'rgba(255,255,255,0.12)', color:'#fff',
   fontSize:15, outline:'none', boxSizing:'border-box',
+  transition: 'all 0.2s ease',
 };
 
 function Paso1({ form, errores, update }: any) {
