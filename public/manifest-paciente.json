@@ -2,7 +2,7 @@
   "name": "ViñaMed – Mi Salud",
   "short_name": "Mi Salud",
   "description": "Portal de pacientes ViñaMed. Resultados, citas y mensajería.",
-  "start_url": "./paciente.html",
+  "start_url": "/login",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0E7490",

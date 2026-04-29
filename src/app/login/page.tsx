@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { loginConEmail } from '@/lib/auth';
 
 export default function LoginPage() {
@@ -10,6 +10,20 @@ export default function LoginPage() {
   const [cargando, setCargando] = useState(false);
   const [errorEmail, setErrorEmail] = useState('');
   const [errorGral, setErrorGral] = useState('');
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
 
   const puedeIngresar = email.trim().length >= 3 && password.trim().length >= 1 && !cargando;
 
@@ -17,6 +31,19 @@ export default function LoginPage() {
     if (!email.trim()) return;
     const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
     setErrorEmail(ok ? '' : 'Correo electrónico inválido');
+  }
+
+  async function handleInstall() {
+    if (!installPrompt) {
+      // Si no hay evento de instalación (iOS o ya instalada), podemos mostrar un mensaje alternativo
+      alert('Para instalar la app, usa la opción "Compartir" y luego "Agregar a inicio" en tu navegador.');
+      return;
+    }
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setInstallPrompt(null);
+    }
   }
 
   async function doLogin() {
@@ -70,17 +97,7 @@ export default function LoginPage() {
           marginBottom: 16
         }}
       >
-        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-          <path d="M2 18 Q6 6 18 18 Q22 22 28 10" stroke="#5DCAA5" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-          <path
-            d="M8 18h4l3-6 4 12 3-6h4"
-            stroke="white"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-        </svg>
+        <img src="/logo1.jpg" alt="Logo" style={{ width: '100%', height: '100%', borderRadius: 16, objectFit: 'cover' }} />
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -101,11 +118,15 @@ export default function LoginPage() {
           border: '1px solid rgba(14,116,144,0.4)',
           borderRadius: 20,
           padding: '4px 12px',
-          marginBottom: 22
+          marginBottom: 22,
+          cursor: 'pointer'
         }}
+        onClick={handleInstall}
       >
         <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#5DCAA5', flexShrink: 0 }} />
-        <span style={{ fontSize: 10, color: '#5DCAA5', letterSpacing: '0.04em' }}>Conexión segura · vinamed.cl</span>
+        <span style={{ fontSize: 10, color: '#5DCAA5', letterSpacing: '0.04em' }}>
+          Descarga la app oficial de ViñaMed
+        </span>
       </div>
 
       <div
@@ -120,28 +141,28 @@ export default function LoginPage() {
       >
         <div style={{ marginBottom: 14 }}>
           <input
-          value={email}
+            value={email}
             onChange={(e) => {
-            setEmail(e.target.value);
-            setErrorEmail('');
+              setEmail(e.target.value);
+              setErrorEmail('');
             }}
-          onBlur={handleEmailBlur}
-          placeholder="tucorreo@dominio.cl"
-          type="email"
-          inputMode="email"
-              style={{
-                width: '100%',
-                background: 'rgba(255,255,255,0.12)',
-                border: '1.5px solid rgba(255,255,255,0.2)',
-                borderRadius: 12,
-                padding: '13px 16px',
-                fontSize: 16,
-                color: '#fff',
-                outline: 'none',
-                boxSizing: 'border-box',
-                transition: 'all 0.2s ease',
-                WebkitAppearance: 'none'
-              }}
+            onBlur={handleEmailBlur}
+            placeholder="tucorreo@dominio.cl"
+            type="email"
+            inputMode="email"
+            style={{
+              width: '100%',
+              background: 'rgba(255,255,255,0.12)',
+              border: '1.5px solid rgba(255,255,255,0.2)',
+              borderRadius: 12,
+              padding: '13px 16px',
+              fontSize: 16,
+              color: '#fff',
+              outline: 'none',
+              boxSizing: 'border-box',
+              transition: 'all 0.2s ease',
+              WebkitAppearance: 'none'
+            }}
           />
           {errorEmail && (
             <p style={{ fontSize: 11, color: 'rgba(239,68,68,0.85)', margin: '4px 0 0' }}>{errorEmail}</p>
@@ -286,4 +307,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
