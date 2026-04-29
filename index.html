@@ -2720,7 +2720,6 @@ async function actualizarProximaCita() {
   }
 
   try {
-    // Normalizar RUT para la consulta (el mismo formato que usa el dashboard)
     const formattedRut = rut.replace(/\./g, '').toUpperCase();
 
     const q = window._db.collection('citas')
@@ -2742,7 +2741,20 @@ async function actualizarProximaCita() {
     const cita = snap.docs[0].data();
     const fecha = cita.fecha.toDate();
     
-    // Formatear fecha: "Mié 9 de abril · 10:30"
+    // Formatear Título: Intentar dividir en dos líneas si tiene más de una palabra
+    const fullTitle = cita.tipoAtencion || 'Atención Médica';
+    const parts = fullTitle.split(' ');
+    if (parts.length > 1 && parts[0].length > 3) {
+      titleEl.innerHTML = `${parts[0]}<br>${parts.slice(1).join(' ')}`;
+    } else {
+      titleEl.textContent = fullTitle;
+    }
+
+    // Subtítulo con fallback
+    const prof = cita.profesionalNombre || 'especialista';
+    subEl.textContent = `Tienes una cita agendada con ${prof} en ViñaMed`;
+
+    // Fecha formateada
     const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
     const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
     
@@ -2751,8 +2763,6 @@ async function actualizarProximaCita() {
     const mes = meses[fecha.getMonth()];
     const hora = fecha.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
 
-    titleEl.textContent = cita.tipoAtencion;
-    subEl.textContent = `Cita con ${cita.profesionalNombre || 'especialista'} en ViñaMed`;
     dateEl.textContent = `${dow} ${dom} de ${mes} · ${hora}`;
 
   } catch (err) {
