@@ -1215,6 +1215,7 @@ function toFechaStr(d) {
 
 function generarSlots(dia, horaInicio, horaFin, duracion, tiempoMuerto) {
   const slots = [];
+  const ahora = new Date();
   const [hIni, mIni] = (horaInicio || '08:00').split(':').map(Number);
   const [hFin, mFin] = (horaFin || '17:00').split(':').map(Number);
 
@@ -1225,7 +1226,9 @@ function generarSlots(dia, horaInicio, horaFin, duracion, tiempoMuerto) {
   while (cur < fin) {
     const slotFin = new Date(cur);
     slotFin.setMinutes(slotFin.getMinutes() + duracion);
-    if (slotFin <= fin) {
+    
+    // Solo agregar si la hora del slot es futura respecto a 'ahora'
+    if (slotFin <= fin && cur > ahora) {
       slots.push({ horaInicio: cur.toTimeString().slice(0, 5), timestamp: new Date(cur) });
     }
     cur.setMinutes(cur.getMinutes() + duracion + (tiempoMuerto || 0));
@@ -1417,7 +1420,7 @@ function PasoDisponibilidad({ tipo, onSeleccionar, onBack }) {
         const hoy = new Date();
         const inicio = new Date(hoy);
         inicio.setDate(inicio.getDate() + semanaOffset * 7);
-        if (semanaOffset === 0) inicio.setDate(inicio.getDate() + 1);
+        // Permitir agendar para el mismo día (se eliminó el +1)
         const fin = new Date(inicio); fin.setDate(fin.getDate() + 13);
         const disp = await obtenerDisponibilidad(inicio, fin, 30);
         if (!alive) return;
