@@ -5,7 +5,7 @@ import { doc, setDoc, serverTimestamp }      from 'firebase/firestore';
 import { authVinamed, dbVinamed }            from '../../lib/firebase';
 import { normalizarRut, validarRut }         from '../../lib/rut';
 
-type Paso = 1 | 2 | 3;
+type Paso = 1 | 2 | 3 | 4;
 
 interface FormData {
   rut:            string;
@@ -30,6 +30,8 @@ export default function RegistroPage() {
   const [cargando,  setCargando] = useState(false);
   const [exito,     setExito]    = useState(false);
   const [errorGral, setErrorGral]= useState('');
+  const [aceptaPoliticas, setAceptaPoliticas] = useState(false);
+  const [aceptaConsentimiento, setAceptaConsentimiento] = useState(false);
 
   function update(campo: keyof FormData, valor: string) {
     setForm(prev => ({ ...prev, [campo]: valor }));
@@ -78,12 +80,16 @@ export default function RegistroPage() {
 
   function handleSiguiente() {
     if (paso === 1 && validarPaso1()) setPaso(2);
-    if (paso === 2 && validarPaso2()) setPaso(3);
+    else if (paso === 2 && validarPaso2()) setPaso(3);
+    else if (paso === 3 && validarPaso3()) setPaso(4);
   }
 
   // ── Registro en Firebase ───────────────────────────────────
   async function handleRegistrar() {
-    if (!validarPaso3()) return;
+    if (!aceptaPoliticas || !aceptaConsentimiento) {
+      setErrorGral('Debes leer y aceptar las políticas y el consentimiento para continuar.');
+      return;
+    }
     setCargando(true);
     setErrorGral('');
 
@@ -205,7 +211,7 @@ export default function RegistroPage() {
 
       {/* Indicador de pasos */}
       <div style={{ display:'flex', gap:8, marginBottom:24 }}>
-        {[1,2,3].map(n => (
+        {[1,2,3,4].map(n => (
           <div key={n} style={{
             width: paso === n ? 24 : 8,
             height: 8, borderRadius: 4,
@@ -229,6 +235,13 @@ export default function RegistroPage() {
           <Paso3 form={form} errores={errores} update={update}
                  errorGral={errorGral}/>
         )}
+        {paso === 4 && (
+          <Paso4 
+            aceptaPoliticas={aceptaPoliticas} setAceptaPoliticas={setAceptaPoliticas}
+            aceptaConsentimiento={aceptaConsentimiento} setAceptaConsentimiento={setAceptaConsentimiento}
+            errorGral={errorGral}
+          />
+        )}
 
         {/* Botones de navegación */}
         <div style={{ display:'flex', gap:10, marginTop:20 }}>
@@ -244,19 +257,19 @@ export default function RegistroPage() {
             </button>
           )}
           <button
-            onClick={paso < 3 ? handleSiguiente : handleRegistrar}
-            disabled={cargando}
+            onClick={paso < 4 ? handleSiguiente : handleRegistrar}
+            disabled={cargando || (paso === 4 && (!aceptaPoliticas || !aceptaConsentimiento))}
             style={{
               flex:2, padding:'13px 0', borderRadius:12,
               border:'none', background:'#fff', color:'#0C4A6E',
               fontSize:14, fontWeight:600,
-              cursor:cargando ? 'not-allowed':'pointer',
-              opacity:cargando ? 0.7 : 1,
+              cursor:(cargando || (paso === 4 && (!aceptaPoliticas || !aceptaConsentimiento))) ? 'not-allowed':'pointer',
+              opacity:(cargando || (paso === 4 && (!aceptaPoliticas || !aceptaConsentimiento))) ? 0.7 : 1,
               display:'flex', alignItems:'center',
               justifyContent:'center', gap:8,
             }}>
             {cargando ? 'Creando cuenta...' :
-             paso < 3  ? 'Continuar →'     : 'Crear mi cuenta'}
+             paso < 4  ? 'Continuar →'     : 'Crear mi cuenta'}
           </button>
         </div>
 
@@ -439,6 +452,65 @@ function Paso3({ form, errores, update, errorGral }: any) {
           borderRadius:10, padding:'10px 14px',
           fontSize:12, color:'rgba(239,68,68,0.9)',
           lineHeight:1.6,
+        }}>
+          {errorGral}
+        </div>
+      )}
+    </>
+  );
+}
+
+function Paso4({ aceptaPoliticas, setAceptaPoliticas, aceptaConsentimiento, setAceptaConsentimiento, errorGral }: any) {
+  return (
+    <>
+      <p style={{ fontSize:15, fontWeight:500, color:'#fff', margin:'0 0 16px' }}>Términos y Condiciones</p>
+      
+      <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+        <label style={{ display:'flex', gap:10, cursor:'pointer' }}>
+          <input 
+            type="checkbox" 
+            checked={aceptaPoliticas} 
+            onChange={e => setAceptaPoliticas(e.target.checked)}
+            style={{ width:18, height:18, marginTop:2 }}
+          />
+          <span style={{ fontSize:13, color:'rgba(255,255,255,0.8)', lineHeight:1.4 }}>
+            He leído y acepto la <strong>Política de Privacidad</strong> y manejo de datos personales.
+          </span>
+        </label>
+
+        <label style={{ display:'flex', gap:10, cursor:'pointer' }}>
+          <input 
+            type="checkbox" 
+            checked={aceptaConsentimiento} 
+            onChange={e => setAceptaConsentimiento(e.target.checked)}
+            style={{ width:18, height:18, marginTop:2 }}
+          />
+          <span style={{ fontSize:13, color:'rgba(255,255,255,0.8)', lineHeight:1.4 }}>
+            Acepto el <strong>Consentimiento Informado</strong> para el uso del Portal del Paciente y telemedicina.
+          </span>
+        </label>
+      </div>
+
+      <div style={{
+        marginTop:16,
+        background:'rgba(255,255,255,0.06)',
+        border:'1px solid rgba(255,255,255,0.1)',
+        borderRadius:10, padding:'12px',
+        maxHeight: 120, overflowY: 'auto'
+      }} className="hide-scrollbar">
+        <p style={{ fontSize:11, color:'rgba(255,255,255,0.5)', margin:0, lineHeight:1.5 }}>
+          <strong>Resumen legal:</strong> ViñaMed se compromete a proteger sus datos según la Ley 19.628. 
+          Al registrarse, usted autoriza el almacenamiento de su ficha clínica digital y la recepción 
+          de notificaciones relacionadas con su salud. Puede revocar este consentimiento en cualquier momento.
+        </p>
+      </div>
+
+      {errorGral && (
+        <div style={{
+          background:'rgba(239,68,68,0.12)',
+          border:'1px solid rgba(239,68,68,0.3)',
+          borderRadius:10, padding:'10px 14px', marginTop:12,
+          fontSize:12, color:'rgba(239,68,68,0.9)',
         }}>
           {errorGral}
         </div>
