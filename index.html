@@ -60,15 +60,19 @@
 }
 
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
-html { -webkit-tap-highlight-color:transparent; scroll-behavior:smooth }
+html, body {
+  height: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
 body {
   font-family:'Figtree',sans-serif;
   background:var(--bg);
   color:var(--text);
-  min-height:100vh;
-  min-height:100dvh;
-  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));
-  overflow-x:hidden;
+  display: flex;
+  flex-direction: column;
 }
 ::selection { background:var(--teal-xl) }
 ::-webkit-scrollbar { width:4px }
@@ -218,12 +222,27 @@ body {
 /* ═══════════════════════════════════════════
    PAGES
 ═══════════════════════════════════════════ */
-main {
-  padding-top:var(--header-h);
-  min-height:100dvh;
+main#appMain {
+  flex: 1;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  padding-top: var(--header-h) !important;
+  padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom)) !important;
+  overflow: hidden !important;
 }
-.page { display:none; animation:slideUp .28s var(--ease) both }
-.page.active { display:block }
+.page {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+.page.active { display: flex !important; }
 
 @keyframes slideUp {
   from { opacity:0; transform:translateY(12px) }
@@ -607,7 +626,7 @@ main {
 </header>
 
 <!-- ══════════════════ MAIN ══════════════════ -->
-<main id="appMain" style="display:block">
+<main id="appMain">
 
   <!-- HOME -->
   <div class="page active" id="tab-home">
@@ -2892,7 +2911,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function mostrarApp() {
   document.getElementById('appHeader').style.display = 'flex';
-  document.getElementById('appMain').style.display = 'block';
+  document.getElementById('appMain').style.display = 'flex';
+  document.getElementById('appMain').style.flexDirection = 'column';
+  document.getElementById('appMain').style.flex = '1';
+  document.getElementById('appMain').style.minHeight = '0';
   document.getElementById('bottomNav').style.display = 'flex';
 
   const firstName = (window.currentUser?.name || 'Paciente').split(' ')[0];

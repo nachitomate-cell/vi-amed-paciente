@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import PasoDisponibilidad, { type GrupoDisp } from './PasoDisponibilidad';
 import PasoConfirmacion from './PasoConfirmacion';
 import { PRESTACIONES_ECO } from '../../constants/prestacionesEco';
@@ -14,6 +15,7 @@ interface Props {
 
 export default function BottomSheetSolicitud({ pacienteActual, onCerrar, mostrarToast }: Props) {
   const [paso, setPaso] = useState(1);
+  const [mounted, setMounted] = useState(false);
 
   // Estados del formulario
   const [tipoAtencion, setTipoAtencion] = useState('');
@@ -53,6 +55,7 @@ export default function BottomSheetSolicitud({ pacienteActual, onCerrar, mostrar
 
   // Bloquear scroll del body cuando el sheet está abierto
   useEffect(() => {
+    setMounted(true);
     setAnimar(true);
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
@@ -70,11 +73,11 @@ export default function BottomSheetSolicitud({ pacienteActual, onCerrar, mostrar
     setTimeout(onCerrar, 300);
   }
 
-  if (enviado) return null;
+  if (enviado || !mounted) return null;
 
   const titulos = ['Tipo de atención', 'Disponibilidad', 'Confirmación'];
 
-  return (
+  return createPortal(
     <>
       {/* Contenedor overlay (fondo oscuro) */}
       <div style={{
@@ -266,7 +269,8 @@ export default function BottomSheetSolicitud({ pacienteActual, onCerrar, mostrar
           )}
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 }
 
