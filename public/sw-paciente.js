@@ -18,10 +18,24 @@ self.addEventListener('fetch', e => {
       if (cached) return cached;
       
       return fetch(e.request).then(response => {
-        // No cachear si la respuesta no es válida o es opaca
-        if (!response || response.status !== 200 || response.type !== 'basic') {
+        // Si la respuesta es una redirección, el navegador bloquea su uso en respondWith
+        // si el modo de redirección es 'manual' (común en navegaciones).
+        // La solución es crear una nueva respuesta a partir del cuerpo de la original.
+        if (response.redirected) {
+          return response.blob().then(blob => {
+            return new Response(blob, {
+              status: response.status,
+              statusText: response.statusText,
+              headers: response.headers
+            });
+          });
+        }
+
+        // Si la respuesta es válida (200), la devolvemos (podríamos cachear aquí)
+        if (response && response.status === 200) {
           return response;
         }
+        
         return response;
       }).catch(() => {
         // Fallback solo para navegaciones
