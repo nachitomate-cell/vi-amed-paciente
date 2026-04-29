@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Cada paciente solo puede leer y escribir su propio consentimiento
+    match /users/{uid}/legal/{doc} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Datos propios del paciente (ficha, citas, etc.)
+    match /users/{uid}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Colecciones públicas o legibles por pacientes
+    match /profesionales/{uid} {
+      allow read: if true;
+    }
+
+    match /citas/{citaId} {
+      allow read: if true; // Para ver disponibilidad o sus propias citas
+      allow create: if request.auth != null;
+    }
+
+    match /horarios/{uid} {
+      allow read: if true;
+    }
+
+    match /bloqueos/{id} {
+      allow read: if true;
+    }
+
+    match /resultados/{id} {
+      allow read: if request.auth != null; // El servicio filtrará por RUT
+    }
+
+
+  }
+}

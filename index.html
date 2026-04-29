@@ -393,6 +393,12 @@ main {
 .new-apt-banner .nab-title { font-size:.92rem; font-weight:700; color:var(--teal) }
 .new-apt-banner .nab-sub { font-size:.78rem; color:var(--muted); margin-top:.2rem }
 
+@keyframes fadeInUp {
+  from { opacity:0; transform:translateY(10px) }
+  to   { opacity:1; transform:translateY(0) }
+}
+.tarjeta-cita { animation:fadeInUp 0.32s ease-out both }
+
 /* ═══════════════════════════════════════════
    MENSAJES TAB
 ═══════════════════════════════════════════ */
@@ -553,42 +559,31 @@ main {
 .tag.teal { background:var(--teal-xl); color:var(--teal) }
 .tag.green { background:var(--green-l); color:var(--green) }
 .tag.amber { background:var(--amber-l); color:var(--amber) }
+
+/* Login New UI Animations */
+@keyframes pulseSec {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 1;   }
+}
+@keyframes spinSec { to { transform: rotate(360deg); } }
+.animate-fade-up {
+  opacity: 0;
+  animation: fadeUp 0.4s ease-out forwards;
+}
+.delay-0 { animation-delay: 0s; }
+.delay-1 { animation-delay: 0.08s; }
+.delay-2 { animation-delay: 0.14s; }
+.delay-3 { animation-delay: 0.2s; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 </style>
 </head>
 <body>
 
-<!-- ══════════════════ LOGIN SCREEN ══════════════════ -->
-<div class="login-screen" id="loginScreen">
-  <div class="login-logo">
-    <img src="logo_vinamed.png" alt="ViñaMed" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-    <span class="logo-fallback" style="display:none">V</span>
-  </div>
-  <div class="login-title">Mi Salud</div>
-  <div class="login-sub">Portal de pacientes · ViñaMed</div>
-
-  <div class="login-card">
-    <div class="login-field">
-      <label>RUT</label>
-      <input type="text" id="loginRut" placeholder="12.345.678-9" maxlength="12">
-    </div>
-    <div class="login-field">
-      <label>Código de acceso</label>
-      <input type="password" id="loginCode" placeholder="Código enviado por el centro" maxlength="6">
-    </div>
-    <div class="login-hint">
-      El centro te entrega un código de acceso al momento de tu atención.<br>
-      <strong style="color:rgba(255,255,255,.8)">Demo:</strong> usa cualquier RUT y código "123456"
-    </div>
-    <button class="btn-login" onclick="doLogin()">Ingresar a mi portal</button>
-    <div class="demo-chips">
-      <div class="demo-chip" onclick="fillDemo('17.543.210-K','123456')">Demo: Ana Ramírez</div>
-      <div class="demo-chip" onclick="fillDemo('10.234.567-8','123456')">Demo: María González</div>
-    </div>
-  </div>
-</div>
-
 <!-- ══════════════════ HEADER ══════════════════ -->
-<header class="app-header" id="appHeader" style="display:none">
+<header class="app-header" id="appHeader" style="display:flex">
   <div class="header-greeting">
     <div class="hi">Buenos días,</div>
     <div class="name" id="headerName">Paciente</div>
@@ -601,7 +596,7 @@ main {
 </header>
 
 <!-- ══════════════════ MAIN ══════════════════ -->
-<main id="appMain" style="display:none">
+<main id="appMain" style="display:block">
 
   <!-- HOME -->
   <div class="page active" id="tab-home">
@@ -700,221 +695,12 @@ main {
 
   <!-- RESULTADOS -->
   <div class="page" id="tab-resultados">
-    <div class="page-inner">
-      <div class="sec-head" style="margin-bottom:.85rem">
-        <h2>Mis resultados</h2>
-      </div>
-      <div class="filter-row">
-        <div class="filter-chip active" onclick="filterResults(this,'todos')">Todos</div>
-        <div class="filter-chip" onclick="filterResults(this,'eco')">Ecografía</div>
-        <div class="filter-chip" onclick="filterResults(this,'enfermeria')">Enfermería</div>
-        <div class="filter-chip" onclick="filterResults(this,'laboratorio')">Laboratorio</div>
-      </div>
-
-      <!-- Resultado 1 — nuevo -->
-      <div class="card result-full" data-cat="eco">
-        <div class="rf-head" onclick="toggleExpand(this.closest('.card'))">
-          <div class="rf-icon" style="background:#e0f2fe">
-            <svg viewBox="0 0 24 24" style="stroke:#0891b2"><ellipse cx="12" cy="12" rx="10" ry="6"/><path d="M12 6c2 3.5 2 8.5 0 12"/><path d="M2 12h20"/></svg>
-          </div>
-          <div class="rf-meta">
-            <div class="rf-type">Ecografía Partes Blandas</div>
-            <div class="rf-date">3 de abril, 2026</div>
-            <div class="rf-doctor"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg> Dr. Martín Rojas</div>
-            <div class="rf-badges">
-              <span class="rf-badge new">Nuevo</span>
-              <span class="rf-badge normal">Normal</span>
-            </div>
-          </div>
-        </div>
-        <div class="expand-body">
-          <div class="expand-inner">
-            <div class="field-group">
-              <div class="fg-label">Región / Detalle</div>
-              <div class="fg-value">Rodilla derecha</div>
-            </div>
-            <div class="field-group">
-              <div class="fg-label">Indicación clínica</div>
-              <div class="fg-value">Dolor en cara lateral de rodilla, descartar patología de partes blandas</div>
-            </div>
-            <div class="field-group">
-              <div class="fg-label">Hallazgos</div>
-              <div class="fg-value">Tendón rotuliano de calibre y ecogenicidad conservada. Sin derrame articular. Menisco lateral sin alteraciones ecográficas. Banda iliotibial sin engrosamiento significativo. Sin colecciones.</div>
-            </div>
-            <div class="field-group">
-              <div class="fg-label">Impresión diagnóstica</div>
-              <div class="fg-value">Ecografía de rodilla derecha sin hallazgos patológicos significativos. Estructuras musculotendinosas conservadas.</div>
-            </div>
-            <div class="expand-actions">
-              <button class="btn btn-primary" onclick="showToast('Descargando PDF...','📄')">
-                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Descargar PDF
-              </button>
-              <button class="btn btn-outline" onclick="showToast('Compartiendo informe...','📤')">Compartir</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Resultado 2 -->
-      <div class="card result-full" data-cat="eco">
-        <div class="rf-head" onclick="toggleExpand(this.closest('.card'))">
-          <div class="rf-icon" style="background:#e0f2fe">
-            <svg viewBox="0 0 24 24" style="stroke:#0891b2"><ellipse cx="12" cy="12" rx="10" ry="6"/><path d="M12 6c2 3.5 2 8.5 0 12"/><path d="M2 12h20"/></svg>
-          </div>
-          <div class="rf-meta">
-            <div class="rf-type">Ecografía Abdominal</div>
-            <div class="rf-date">15 de enero, 2026</div>
-            <div class="rf-doctor"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg> Dr. Martín Rojas</div>
-            <div class="rf-badges">
-              <span class="rf-badge revisar">Revisar con médico</span>
-            </div>
-          </div>
-        </div>
-        <div class="expand-body">
-          <div class="expand-inner">
-            <div class="field-group">
-              <div class="fg-label">Indicación clínica</div>
-              <div class="fg-value">Dolor en hipocondrio derecho, control hepático</div>
-            </div>
-            <div class="field-group">
-              <div class="fg-label">Hallazgos</div>
-              <div class="fg-value">Hígado de tamaño conservado con leve aumento de ecogenicidad difusa compatible con esteatosis hepática leve. Vía biliar no dilatada. Vesícula sin litiasis.</div>
-            </div>
-            <div class="field-group">
-              <div class="fg-label">Impresión diagnóstica</div>
-              <div class="fg-value">Hallazgos compatibles con esteatosis hepática leve. Se recomienda control clínico y eventual perfil lipídico.</div>
-            </div>
-            <div class="expand-actions">
-              <button class="btn btn-primary" onclick="showToast('Descargando PDF...','📄')">
-                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Descargar PDF
-              </button>
-              <button class="btn btn-outline" onclick="showTab('mensajes')">Consultar al centro</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Resultado 3 enfermería -->
-      <div class="card result-full" data-cat="enfermeria">
-        <div class="rf-head" onclick="toggleExpand(this.closest('.card'))">
-          <div class="rf-icon" style="background:#d1fae5">
-            <svg viewBox="0 0 24 24" style="stroke:#059669"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-          </div>
-          <div class="rf-meta">
-            <div class="rf-type">Procedimiento de Enfermería</div>
-            <div class="rf-date">10 de marzo, 2026</div>
-            <div class="rf-doctor"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg> Enf. Ignacio</div>
-            <div class="rf-badges">
-              <span class="rf-badge normal">Completado</span>
-            </div>
-          </div>
-        </div>
-        <div class="expand-body">
-          <div class="expand-inner">
-            <div class="field-group">
-              <div class="fg-label">Procedimiento</div>
-              <div class="fg-value">Curación avanzada herida pie derecho</div>
-            </div>
-            <div class="field-group">
-              <div class="fg-label">Evolución</div>
-              <div class="fg-value">Herida en fase de granulación. Bordes limpios sin signos de infección. Se realizó limpieza con NaCl 0.9%, desbridamiento superficial y cobertura con apósito hidrocoloide.</div>
-            </div>
-            <div class="expand-actions">
-              <button class="btn btn-primary" onclick="showToast('Descargando hoja de procedimiento...','📄')">
-                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Descargar PDF
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <div id="resultados-react-root"></div>
   </div>
 
   <!-- CITAS -->
   <div class="page" id="tab-citas">
-    <div class="page-inner">
-      <div class="sec-head" style="margin-bottom:.85rem">
-        <h2>Mis citas</h2>
-      </div>
-
-      <!-- Calendar strip -->
-      <div class="calendar-strip" id="calStrip"></div>
-
-      <div class="sec-head">
-        <h2 style="font-size:1rem;font-family:'Figtree',sans-serif;font-style:normal;font-weight:600">Próximas</h2>
-      </div>
-
-      <div class="card appointment-card">
-        <div class="apt-head">
-          <div class="apt-time"><div class="t">10:30</div><div class="ampm">AM</div></div>
-          <div class="apt-divider-v"></div>
-          <div class="apt-info">
-            <div class="apt-type">Ecografía Abdominal</div>
-            <div class="apt-doctor">Dr. Martín Rojas</div>
-            <div class="apt-location">
-              <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              Of. 408, Medio Oriente 831
-            </div>
-          </div>
-          <div class="apt-status"><span class="status-pill confirmed">Confirmada</span></div>
-        </div>
-        <div class="apt-actions">
-          <button class="btn btn-outline" onclick="showToast('Recordatorio activado','🔔')">
-            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            Recordatorio
-          </button>
-          <button class="btn btn-outline" onclick="showToast('Abriendo Maps...','📍')">Cómo llegar</button>
-          <button class="btn btn-ghost btn-danger" onclick="showToast('Solicitud de cancelación enviada','⚠️')">Cancelar</button>
-        </div>
-      </div>
-
-      <div class="sec-head" style="margin-top:.75rem">
-        <h2 style="font-size:1rem;font-family:'Figtree',sans-serif;font-style:normal;font-weight:600;color:var(--muted)">Historial</h2>
-      </div>
-
-      <div class="card appointment-card">
-        <div class="apt-head">
-          <div class="apt-time"><div class="t">11:00</div><div class="ampm">AM</div></div>
-          <div class="apt-divider-v"></div>
-          <div class="apt-info">
-            <div class="apt-type">Ecografía Partes Blandas</div>
-            <div class="apt-doctor">Dr. Martín Rojas</div>
-            <div class="apt-location">
-              <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              Of. 408, Medio Oriente 831
-            </div>
-          </div>
-          <div class="apt-status"><span class="status-pill done">Realizada</span></div>
-        </div>
-      </div>
-
-      <div class="card appointment-card">
-        <div class="apt-head">
-          <div class="apt-time"><div class="t">10:00</div><div class="ampm">AM</div></div>
-          <div class="apt-divider-v"></div>
-          <div class="apt-info">
-            <div class="apt-type">Curación avanzada</div>
-            <div class="apt-doctor">Enf. Ignacio</div>
-            <div class="apt-location">
-              <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              Of. 408, Medio Oriente 831
-            </div>
-          </div>
-          <div class="apt-status"><span class="status-pill done">Realizada</span></div>
-        </div>
-      </div>
-
-      <div class="new-apt-banner" onclick="showToast('Solicitud de cita enviada al centro','✅')">
-        <div class="nab-icon">📅</div>
-        <div class="nab-title">Solicitar nueva cita</div>
-        <div class="nab-sub">El centro te confirmará en horario de atención</div>
-      </div>
-
-    </div>
+    <div id="citas-react-root"></div>
   </div>
 
   <!-- MENSAJES -->
@@ -958,74 +744,13 @@ main {
 
   <!-- PERFIL -->
   <div class="page" id="tab-perfil">
-    <div class="profile-header">
-      <div class="profile-avatar" id="profileAvatar">A</div>
-      <div class="profile-name" id="profileName">Ana Ramírez</div>
-      <div class="profile-rut" id="profileRut">17.543.210-K</div>
-    </div>
-    <div class="profile-body">
-      <div class="profile-card">
-        <div class="profile-row">
-          <div class="pr-icon" style="background:#e0f2fe"><svg viewBox="0 0 24 24" style="stroke:#0891b2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-          <div class="pr-label">Fecha de nacimiento</div>
-          <div class="pr-value">15/08/1987</div>
-        </div>
-        <div class="profile-row">
-          <div class="pr-icon" style="background:#f3e8ff"><svg viewBox="0 0 24 24" style="stroke:#7c3aed"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12"/><path d="M1.63 3.18A2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72"/></svg></div>
-          <div class="pr-label">Teléfono</div>
-          <div class="pr-value">+56 9 8765 4321</div>
-        </div>
-        <div class="profile-row">
-          <div class="pr-icon" style="background:#fef3c7"><svg viewBox="0 0 24 24" style="stroke:#d97706"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-          <div class="pr-label">Correo</div>
-          <div class="pr-value">ana@correo.cl</div>
-        </div>
-        <div class="profile-row" onclick="showToast('Editando datos de contacto...','✏️')">
-          <div class="pr-icon" style="background:#f1f5f9"><svg viewBox="0 0 24 24" style="stroke:var(--muted)"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
-          <div class="pr-label">Editar datos de contacto</div>
-          <div class="pr-arrow">›</div>
-        </div>
-      </div>
-
-      <div class="profile-card">
-        <div class="profile-row" onclick="showToast('3 atenciones registradas','📋')">
-          <div class="pr-icon" style="background:#e0f2fe"><svg viewBox="0 0 24 24" style="stroke:#0891b2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-          <div class="pr-label">Historial de atenciones</div>
-          <div class="pr-value">3 registros</div>
-          <div class="pr-arrow">›</div>
-        </div>
-        <div class="profile-row" onclick="showToast('Sin alergias registradas','✅')">
-          <div class="pr-icon" style="background:#fef3c7"><svg viewBox="0 0 24 24" style="stroke:#d97706"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-          <div class="pr-label">Alergias registradas</div>
-          <div class="pr-value">Ninguna</div>
-          <div class="pr-arrow">›</div>
-        </div>
-        <div class="profile-row" onclick="showToast('Abriendo configuración...','⚙️')">
-          <div class="pr-icon" style="background:#f1f5f9"><svg viewBox="0 0 24 24" style="stroke:var(--muted)"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33"/></svg></div>
-          <div class="pr-label">Configuración</div>
-          <div class="pr-arrow">›</div>
-        </div>
-      </div>
-
-      <div class="profile-card" style="margin-bottom:1.5rem">
-        <div class="profile-row">
-          <div class="pr-icon" style="background:#f1f5f9"><svg viewBox="0 0 24 24" style="stroke:var(--muted)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-          <div class="pr-label">Versión de la app</div>
-          <div class="pr-value">1.0.0-demo</div>
-        </div>
-      </div>
-
-      <button class="logout-btn" onclick="doLogout()">
-        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Cerrar sesión
-      </button>
-    </div>
+    <div id="perfil-react-root"></div>
   </div>
 
 </main>
 
 <!-- ══════════════════ BOTTOM NAV ══════════════════ -->
-<nav class="bottom-nav" id="bottomNav" style="display:none">
+<nav class="bottom-nav" id="bottomNav" style="display:flex">
   <div class="nav-tab active" id="nt-home" onclick="showTab('home')">
     <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span>Inicio</span>
@@ -1060,58 +785,1923 @@ main {
   <div class="toast-bar"></div>
 </div>
 
-<script>
-// ─── DEMO DATA ────────────────────────────────────────────
-const DEMO_USERS = {
-  'cualquier': { name:'Ana Ramírez', initials:'AR', rut:'17.543.210-K' },
-};
-const DEMO_CODE = '123456';
+<!-- ══════════════════ CONSENT MODAL ROOT ══════════════════ -->
+<div id="consent-root"></div>
 
-let currentUser = null;
-let unreadMsgs = 1;
+<!-- Firebase Compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
-// ─── LOGIN ────────────────────────────────────────────────
-function fillDemo(rut, code) {
-  document.getElementById('loginRut').value = rut;
-  document.getElementById('loginCode').value = code;
+<!-- React + ReactDOM + Babel (para ConsentimientoModal) -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- ConsentimientoModal — fuente canónica: src/components/ConsentimientoModal.jsx -->
+<script type="text/babel">
+const { useState } = React;
+
+const VERSION = "1.0";
+const FECHA_VERSION = "Enero 2026";
+
+const POLITICA = [
+  {
+    titulo: "1. Responsable del tratamiento",
+    contenido:
+      "Centro Médico ViñaMed (RUT 77.500.907-1), Medio Oriente 831, Of. 408, Viña del Mar, es el responsable del tratamiento de sus datos personales en este Portal, conforme a la Ley N° 19.628 y la Ley N° 20.584.",
+  },
+  {
+    titulo: "2. Datos que tratamos",
+    contenido:
+      "Tratamos datos de identificación (nombre, RUT, contacto), datos de salud (historia clínica, resultados de exámenes, diagnósticos, alergias, citas) y datos técnicos de acceso (log de sesión, dispositivo). Los datos de salud son datos sensibles según la Ley N° 19.628.",
+  },
+  {
+    titulo: "3. Finalidad del tratamiento",
+    contenido:
+      "Sus datos se utilizan exclusivamente para: (a) mostrarle su ficha clínica y resultados; (b) gestionar sus citas; (c) enviarle notificaciones de su atención; (d) mantener la seguridad del Portal; (e) cumplir obligaciones legales ante MINSAL.",
+  },
+  {
+    titulo: "4. Comunicación a terceros",
+    contenido:
+      "ViñaMed no vende sus datos. Solo los comunica a: proveedores tecnológicos (Firebase/Google) bajo contrato de confidencialidad; organismos públicos de salud cuando lo exija la ley; y a otros prestadores de salud únicamente con su consentimiento previo.",
+  },
+  {
+    titulo: "5. Seguridad y conservación",
+    contenido:
+      "Aplicamos cifrado TLS, control de acceso y registro de auditoría. Su historia clínica se conserva 15 años (D.S. 41/2012 MINSAL). Los logs de acceso se conservan 1 año. Los datos de contacto mientras mantenga relación con el Centro.",
+  },
+  {
+    titulo: "6. Sus derechos",
+    contenido:
+      "Tiene derechos de Acceso, Rectificación, Cancelación y Oposición (ARCO) según la Ley N° 19.628, y derechos especiales como paciente (acceder a su ficha, corregir errores, designar quién puede verla) según la Ley N° 20.584. Escríbanos a contacto@vinamed.cl.",
+  },
+  {
+    titulo: "7. Marco legal",
+    contenido:
+      "Ley N° 19.628 (datos personales) · Ley N° 20.584 (derechos del paciente) · D.S. N° 41/2012 MINSAL (ficha clínica) · Ley N° 19.799 (firma electrónica) · Boletín 11.144-07 (nueva ley de datos, en tramitación).",
+  },
+];
+
+const CONSENTIMIENTO_ITEMS = [
+  "Acceder, visualizar y descargar mi ficha clínica electrónica, incluyendo resultados de exámenes, informes médicos y diagnósticos.",
+  "Tratar mis datos de salud para la gestión de citas (agendamiento, confirmación, modificación y cancelación).",
+  "Enviarme notificaciones relacionadas con mi atención médica (resultados disponibles, recordatorios de citas) por mensajería interna, correo o SMS según mis preferencias.",
+  "Conservar un registro de auditoría de mis accesos al Portal (log de sesión) con fines de seguridad, conforme al Art. 12 de la Ley N° 20.584.",
+  "Almacenar mis datos en la infraestructura de Firebase (Google LLC) bajo las garantías de confidencialidad descritas en la Política de Privacidad.",
+];
+
+function Seccion({ titulo, contenido }) {
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <p style={{ fontWeight: 600, fontSize: 13, color: "#0E7490", margin: "0 0 4px" }}>
+        {titulo}
+      </p>
+      <p style={{ fontSize: 13, color: "#374151", lineHeight: 1.6, margin: 0 }}>
+        {contenido}
+      </p>
+    </div>
+  );
 }
 
-function doLogin() {
-  const rut  = document.getElementById('loginRut').value.trim();
-  const code = document.getElementById('loginCode').value.trim();
-  if (!rut) { showToast('Ingresa tu RUT','⚠️'); return; }
-  if (code !== DEMO_CODE) { showToast('Código incorrecto. Demo: 123456','⚠️'); return; }
+function CheckItem({ label, checked, onChange }) {
+  return (
+    <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer", marginBottom: 12 }}>
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        style={{ marginTop: 3, accentColor: "#0E7490", width: 16, height: 16, flexShrink: 0 }}
+      />
+      <span style={{ fontSize: 13, color: "#374151", lineHeight: 1.5 }}>{label}</span>
+    </label>
+  );
+}
 
-  // pick demo user by RUT or fallback
-  const knownUsers = {
-    '17.543.210-K': { name:'Ana Ramírez',     initials:'AR', rut:'17.543.210-K' },
-    '10.234.567-8': { name:'María González',   initials:'MG', rut:'10.234.567-8' },
-  };
-  currentUser = knownUsers[rut] || { name:'Paciente', initials:rut.slice(0,2).toUpperCase(), rut };
+function ConsentimientoModal({ onAceptar, onRechazar, modoLectura = false, tabInicial = "privacidad" }) {
+  const [tab, setTab]             = useState(tabInicial);
+  const [checks, setChecks]       = useState(Array(CONSENTIMIENTO_ITEMS.length).fill(false));
+  const [checkTodos, setCheckTodos] = useState(false);
+  const [mayorEdad, setMayorEdad] = useState(false);
+  const [enviando, setEnviando]   = useState(false);
 
-  document.getElementById('loginScreen').classList.add('hidden');
+  const todosAceptados = checks.every(Boolean) && mayorEdad;
+
+  function toggleCheck(i) {
+    const nuevo = [...checks];
+    nuevo[i] = !nuevo[i];
+    setChecks(nuevo);
+    setCheckTodos(nuevo.every(Boolean));
+  }
+
+  function toggleTodos() {
+    const val = !checkTodos;
+    setCheckTodos(val);
+    setChecks(Array(CONSENTIMIENTO_ITEMS.length).fill(val));
+  }
+
+  async function handleAceptar() {
+    if (!todosAceptados) return;
+    setEnviando(true);
+    try {
+      await onAceptar({ version: VERSION, timestamp: new Date().toISOString(), items: CONSENTIMIENTO_ITEMS });
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  const overlay = { position:"fixed", inset:0, background:"rgba(0,0,0,0.55)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:9999, padding:16 };
+  const modal   = { background:"#fff", borderRadius:16, width:"100%", maxWidth:540, maxHeight:"90vh", display:"flex", flexDirection:"column", overflow:"hidden", boxShadow:"0 20px 60px rgba(0,0,0,0.25)" };
+  const header  = { background:"linear-gradient(135deg, #0E7490 0%, #0F766E 100%)", padding:"20px 24px 16px", flexShrink:0 };
+  const tabBar  = { display:"flex", borderBottom:"1px solid #E5E7EB", flexShrink:0, background:"#F9FAFB" };
+  const tabBtn  = (a) => ({ flex:1, padding:"12px 0", fontSize:13, fontWeight:a?600:400, color:a?"#0E7490":"#6B7280", background:"none", border:"none", borderBottom:a?"2px solid #0E7490":"2px solid transparent", cursor:"pointer" });
+  const scroll  = { overflowY:"auto", padding:"20px 24px", flex:1 };
+  const footer  = { padding:"16px 24px", borderTop:"1px solid #E5E7EB", flexShrink:0, background:"#F9FAFB" };
+  const btnP    = { width:"100%", padding:"13px 0", background:todosAceptados?"#0E7490":"#D1D5DB", color:todosAceptados?"#fff":"#9CA3AF", border:"none", borderRadius:10, fontSize:15, fontWeight:600, cursor:todosAceptados?"pointer":"not-allowed", marginBottom:8 };
+  const btnS    = { width:"100%", padding:"10px 0", background:"none", color:"#6B7280", border:"1px solid #D1D5DB", borderRadius:10, fontSize:13, cursor:"pointer" };
+  const aviso   = { background:"#FFF7ED", border:"1px solid #FED7AA", borderRadius:8, padding:"10px 14px", fontSize:12, color:"#92400E", lineHeight:1.5, marginBottom:16 };
+
+  return (
+    <div style={overlay}>
+      <div style={modal}>
+        <div style={header}>
+          <p style={{ color:"rgba(255,255,255,0.75)", fontSize:12, margin:"0 0 2px" }}>Centro Médico ViñaMed · Portal Mi Salud</p>
+          <p style={{ color:"#fff", fontSize:17, fontWeight:700, margin:"0 0 4px" }}>{modoLectura ? "Información legal" : "Privacidad y consentimiento"}</p>
+          <p style={{ color:"rgba(255,255,255,0.7)", fontSize:11, margin:0 }}>Versión {VERSION} · {FECHA_VERSION}</p>
+        </div>
+
+        <div style={tabBar}>
+          <button style={tabBtn(tab==="privacidad")}      onClick={() => setTab("privacidad")}>Política de privacidad</button>
+          <button style={tabBtn(tab==="consentimiento")}  onClick={() => setTab("consentimiento")}>Consentimiento informado</button>
+        </div>
+
+        <div style={scroll}>
+          {tab === "privacidad" && (
+            <>
+              <p style={{ fontSize:13, color:"#6B7280", marginTop:0, marginBottom:20, lineHeight:1.6 }}>
+                Lea cómo tratamos sus datos de salud antes de aceptar. Su información clínica es un dato sensible y la protegemos conforme a la ley chilena.
+              </p>
+              {POLITICA.map((s) => <Seccion key={s.titulo} titulo={s.titulo} contenido={s.contenido} />)}
+              <p style={{ fontSize:12, color:"#9CA3AF", marginTop:8, lineHeight:1.5 }}>
+                Para más información o para ejercer sus derechos, contacte a <span style={{ color:"#0E7490" }}>contacto@vinamed.cl</span>
+              </p>
+            </>
+          )}
+
+          {tab === "consentimiento" && (
+            <>
+              <div style={aviso}><strong>Aviso de emergencias:</strong> La mensajería del Portal es para consultas no urgentes. En caso de emergencia llame al 131 (SAMU).</div>
+              <p style={{ fontSize:13, color:"#374151", marginTop:0, marginBottom:16, lineHeight:1.6 }}>
+                Para usar el Portal, necesitamos su autorización expresa para tratar sus datos de salud. Puede revocar este consentimiento en cualquier momento sin perjuicio de su atención presencial.
+              </p>
+              <p style={{ fontSize:13, fontWeight:600, color:"#111827", marginBottom:12 }}>Autorizo a Centro Médico ViñaMed a:</p>
+
+              {modoLectura ? (
+                CONSENTIMIENTO_ITEMS.map((item, i) => (
+                  <p key={i} style={{ fontSize:13, color:"#374151", lineHeight:1.5, marginBottom:12, display:"flex", gap:8 }}>
+                    <span style={{ fontWeight:600, color:"#0E7490", flexShrink:0 }}>{String.fromCharCode(65+i)}.</span>
+                    <span>{item}</span>
+                  </p>
+                ))
+              ) : (
+                <>
+                  <label style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 12px", background:"#F0FDFA", borderRadius:8, cursor:"pointer", marginBottom:16, border:"1px solid #99F6E4" }}>
+                    <input type="checkbox" checked={checkTodos} onChange={toggleTodos} style={{ accentColor:"#0E7490", width:16, height:16 }} />
+                    <span style={{ fontSize:13, fontWeight:600, color:"#0F766E" }}>Aceptar todos los puntos</span>
+                  </label>
+
+                  {CONSENTIMIENTO_ITEMS.map((item, i) => (
+                    <CheckItem key={i} label={`${String.fromCharCode(65+i)}. ${item}`} checked={checks[i]} onChange={() => toggleCheck(i)} />
+                  ))}
+
+                  <div style={{ borderTop:"1px solid #E5E7EB", paddingTop:16, marginTop:8 }}>
+                    <CheckItem
+                      label="Confirmo ser mayor de 18 años o actuar como representante legal del paciente titular de los datos."
+                      checked={mayorEdad}
+                      onChange={() => setMayorEdad(!mayorEdad)}
+                    />
+                  </div>
+                  {!todosAceptados && <p style={{ fontSize:12, color:"#9CA3AF", marginTop:8 }}>Debe marcar todos los puntos para continuar.</p>}
+                </>
+              )}
+            </>
+          )}
+        </div>
+
+        <div style={footer}>
+          {modoLectura ? (
+            <button style={{ ...btnS, color:"#0E7490", borderColor:"#0E7490", fontWeight:600 }} onClick={onRechazar}>
+              Cerrar
+            </button>
+          ) : (
+            <>
+              {tab === "privacidad" ? (
+                <button style={{ ...btnP, background:"#0E7490", color:"#fff", cursor:"pointer" }} onClick={() => setTab("consentimiento")}>
+                  Continuar al consentimiento →
+                </button>
+              ) : (
+                <button style={btnP} onClick={handleAceptar} disabled={!todosAceptados || enviando}>
+                  {enviando ? "Registrando..." : "Acepto y accedo al Portal"}
+                </button>
+              )}
+              <button style={btnS} onClick={onRechazar}>No acepto — volver al inicio</button>
+              <p style={{ fontSize:11, color:"#9CA3AF", textAlign:"center", margin:"8px 0 0" }}>
+                Su aceptación queda registrada con sello de fecha y hora · Ley N° 19.628 · Ley N° 20.584
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Root del modal de consentimiento (se usa desde el portal)
+window._consentRoot = null;
+window.mostrarModalConsentimiento = function(uid, onSuccess) {
+  const container = document.getElementById('consent-root');
+  if (!window._consentRoot) {
+    window._consentRoot = ReactDOM.createRoot(container);
+  }
+  window._consentRoot.render(
+    <ConsentimientoModal
+      onAceptar={async function(datos) {
+        await window.guardarConsentimiento(uid, datos);
+        window._consentRoot.unmount();
+        window._consentRoot = null;
+        onSuccess();
+      }}
+      onRechazar={function() {
+        window._consentRoot.unmount();
+        window._consentRoot = null;
+        doLogout();
+      }}
+    />
+  );
+};
+
+window.abrirModalLegalPerfil = function(tabInicial) {
+  const container = document.getElementById('consent-root');
+  if (!window._consentRoot) {
+    window._consentRoot = ReactDOM.createRoot(container);
+  }
+  window._consentRoot.render(
+    <ConsentimientoModal
+      modoLectura={true}
+      tabInicial={tabInicial}
+      onRechazar={function() {
+        window._consentRoot.unmount();
+        window._consentRoot = null;
+      }}
+    />
+  );
+};
+</script>
+
+<!-- Global State Initialization -->
+<script>
+  window.currentUser = null;
+  window.currentUid = null;
+</script>
+
+<!-- ══════════════════ CITAS APP (React) ══════════════════ -->
+<script type="text/babel">
+(function () {
+const { useState, useEffect, useRef } = React;
+
+// ── Mock data ──────────────────────────────────────────────────────────────
+
+const PRESTACIONES_ECO = [
+  { id: 'eco-doppler-color',      label: 'Ecografía Doppler color',       grupo: 'Doppler y vascular' },
+  { id: 'eco-doppler-renal',      label: 'Ecografía Doppler renal',       grupo: 'Doppler y vascular' },
+  { id: 'eco-doppler-arterial',   label: 'Ecografía Doppler arterial',    grupo: 'Doppler y vascular' },
+  { id: 'eco-doppler-venoso',     label: 'Ecografía Doppler venoso',      grupo: 'Doppler y vascular' },
+  { id: 'eco-doppler-testicular', label: 'Ecografía Doppler testicular',  grupo: 'Doppler y vascular' },
+  { id: 'eco-vascular-periferico',label: 'Ecografía vascular periférico', grupo: 'Doppler y vascular' },
+  { id: 'eco-vasos-cuello',       label: 'Ecografía vasos del cuello',    grupo: 'Doppler y vascular' },
+  { id: 'eco-tiroidea-cuello',    label: 'Ecografía tiroidea / cuello',   grupo: 'Cabeza y cuello' },
+  { id: 'eco-region-facial',      label: 'Ecografía región facial',       grupo: 'Cabeza y cuello' },
+  { id: 'eco-region-cervical',    label: 'Ecografía región cervical',     grupo: 'Cabeza y cuello' },
+  { id: 'eco-dedos-manos',        label: 'Ecografía dedos / manos',       grupo: 'Músculo-esquelético' },
+  { id: 'eco-munecas-codos',      label: 'Ecografía muñecas / codos',     grupo: 'Músculo-esquelético' },
+  { id: 'eco-hombros',            label: 'Ecografía hombros',             grupo: 'Músculo-esquelético' },
+  { id: 'eco-region-axilar',      label: 'Ecografía región axilar',       grupo: 'Músculo-esquelético' },
+  { id: 'eco-pies-tobillos',      label: 'Ecografía pies / tobillos',     grupo: 'Músculo-esquelético' },
+  { id: 'eco-rodillas',           label: 'Ecografía rodillas',            grupo: 'Músculo-esquelético' },
+  { id: 'eco-caderas',            label: 'Ecografía caderas',             grupo: 'Músculo-esquelético' },
+  { id: 'eco-unas',               label: 'Ecografía uñas',                grupo: 'Músculo-esquelético' },
+  { id: 'eco-piel',               label: 'Ecografía de piel',             grupo: 'Piel y tejidos' },
+  { id: 'eco-abdominal',          label: 'Ecografía abdominal',           grupo: 'Abdominal y pélvico' },
+  { id: 'eco-renal',              label: 'Ecografía renal',               grupo: 'Abdominal y pélvico' },
+  { id: 'eco-pelviana',           label: 'Ecografía pelviana',            grupo: 'Abdominal y pélvico' },
+  { id: 'eco-inguinal',           label: 'Ecografía inguinal',            grupo: 'Abdominal y pélvico' },
+  { id: 'eco-pediatrica',         label: 'Ecografía pediátrica',          grupo: 'Otras' },
+  { id: 'eco-mamaria',            label: 'Ecografía mamaria',             grupo: 'Otras' },
+  { id: 'eco-testicular',         label: 'Ecografía testicular',          grupo: 'Otras' },
+];
+
+const GRUPOS_ECO = Array.from(new Set(PRESTACIONES_ECO.map(p => p.grupo)));
+
+const CITAS_INICIAL = [
+  { id:'1', tipoAtencion:'Ecografía Abdominal',    profesional:'Dr. Martín Rojas', hora:'10:30', ampm:'AM', box:'Of. 408, Medio Oriente 831', estado:'confirmada', proxima:true },
+  { id:'2', tipoAtencion:'Ecografía Partes Blandas',profesional:'Dr. Martín Rojas', hora:'11:00', ampm:'AM', box:'Of. 408, Medio Oriente 831', estado:'realizada' },
+  { id:'3', tipoAtencion:'Curación avanzada',       profesional:'Enf. Ignacio',     hora:'10:00', ampm:'AM', box:'Of. 408, Medio Oriente 831', estado:'realizada' },
+];
+
+const BADGE = {
+  confirmada:{ bg:'#CCFBF1', color:'#0F766E', label:'Confirmada' },
+  solicitada:{ bg:'#FEF9C3', color:'#854D0E', label:'Solicitada' },
+  realizada: { bg:'#F3F4F6', color:'#6B7280', label:'Realizada'  },
+  cancelada: { bg:'#FEE2E2', color:'#991B1B', label:'Cancelada'  },
+};
+
+const ICONO_CAT      = { ecografia:'🔵', enfermeria:'🟢', medico:'🩺' };
+
+// ── Botones reutilizables ──────────────────────────────────────────────────
+
+function BtnPrimario({ label, onClick, disabled, flex=1 }) {
+  return (
+    <button onClick={onClick} disabled={disabled}
+      style={{ flex, padding:'13px 0', background:disabled?'#E5E7EB':'#0E7490', color:disabled?'#9CA3AF':'#fff', border:'none', borderRadius:12, fontSize:14, fontWeight:600, cursor:disabled?'not-allowed':'pointer', transition:'background 0.2s' }}>
+      {label}
+    </button>
+  );
+}
+
+function BtnSecundario({ label, onClick }) {
+  return (
+    <button onClick={onClick}
+      style={{ flex:1, padding:'13px 0', background:'none', border:'1px solid #E5E7EB', borderRadius:12, fontSize:14, fontWeight:500, color:'#6B7280', cursor:'pointer' }}>
+      {label}
+    </button>
+  );
+}
+
+function Pill({ label, activo, onClick }) {
+  return (
+    <button onClick={onClick}
+      style={{ padding:'9px 16px', background:activo?'#0E7490':'#F3F4F6', color:activo?'#fff':'#374151', border:'none', borderRadius:99, fontSize:13, fontWeight:500, cursor:'pointer', transition:'all 0.15s', WebkitTapHighlightColor:'transparent', flexShrink:0 }}
+      onTouchStart={e => e.currentTarget.style.transform='scale(0.96)'}
+      onTouchEnd={e   => e.currentTarget.style.transform='scale(1)'}>
+      {label}
+    </button>
+  );
+}
+
+// ── Barra de progreso ──────────────────────────────────────────────────────
+
+function BarraProgreso({ paso }) {
+  return (
+    <div style={{ height:3, background:'#E5E7EB', borderRadius:2, overflow:'hidden' }}>
+      <div style={{ height:'100%', width:`${Math.round((paso/3)*100)}%`, background:'#0E7490', borderRadius:2, transition:'width 0.45s cubic-bezier(0.34,1.56,0.64,1)' }} />
+    </div>
+  );
+}
+
+// ── Step 1: Tipo de atención ───────────────────────────────────────────────
+
+function PasoTipo({ seleccion, onSel, onNext }) {
+  return (
+    <div style={{ display:'flex', flexDirection:'column', flex:1, gap:14, overflowY:'auto' }}>
+      <p style={{ fontSize:15, fontWeight:600, color:'#0f172a', margin:0 }}>¿Qué tipo de ecografía necesitas?</p>
+      
+      {GRUPOS_ECO.map(grupo => (
+        <div key={grupo} style={{ marginBottom: 12 }}>
+          <p style={{ fontSize: 11, fontWeight: 500, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
+            {grupo}
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {PRESTACIONES_ECO.filter(p => p.grupo === grupo).map(p => {
+              const on = seleccion?.label === p.label;
+              return (
+                <div key={p.id} onClick={() => onSel(p)}
+                  style={{
+                    padding: '12px 14px',
+                    borderRadius: 10,
+                    border: on ? '1.5px solid #0E7490' : '0.5px solid #E5E7EB',
+                    background: on ? 'rgba(14,116,144,0.06)' : '#fff',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                  }}>
+                  <span style={{ fontSize: 14, color: on ? '#0E7490' : '#0f172a', fontWeight: on ? 500 : 400 }}>
+                    {p.label}
+                  </span>
+                  {on && (
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <circle cx="8" cy="8" r="7.5" fill="#0E7490"/>
+                      <path d="M5 8l2 2 4-4" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+      <div style={{ paddingBottom: 16 }}>
+        <BtnPrimario label="Continuar →" onClick={onNext} disabled={!seleccion} />
+      </div>
+    </div>
+  );
+}
+
+// ── Step 2: Disponibilidad real ─────────────────────────────────────────────
+
+function toFechaStr(d) {
+  return d.toISOString().split('T')[0];
+}
+
+function generarSlots(dia, horaInicio, horaFin, duracion, tiempoMuerto) {
+  const slots = [];
+  const [hIni, mIni] = (horaInicio || '08:00').split(':').map(Number);
+  const [hFin, mFin] = (horaFin || '17:00').split(':').map(Number);
+
+  const inicio = new Date(dia); inicio.setHours(hIni, mIni, 0, 0);
+  const fin    = new Date(dia); fin.setHours(hFin, mFin, 0, 0);
+
+  const cur = new Date(inicio);
+  while (cur < fin) {
+    const slotFin = new Date(cur);
+    slotFin.setMinutes(slotFin.getMinutes() + duracion);
+    if (slotFin <= fin) {
+      slots.push({ horaInicio: cur.toTimeString().slice(0, 5), timestamp: new Date(cur) });
+    }
+    cur.setMinutes(cur.getMinutes() + duracion + (tiempoMuerto || 0));
+  }
+  return slots;
+}
+
+function estaOcupado(slot, citas, duracion) {
+  return (citas || []).some(cita => {
+    const citaInicio = cita.fecha && cita.fecha.toDate ? cita.fecha.toDate() : null;
+    if (!citaInicio) return false;
+    const citaFin = new Date(citaInicio);
+    citaFin.setMinutes(citaFin.getMinutes() + (cita.duracionMinutos || duracion));
+    const slotFin = new Date(slot.timestamp);
+    slotFin.setMinutes(slotFin.getMinutes() + duracion);
+    return slot.timestamp < citaFin && slotFin > citaInicio;
+  });
+}
+
+function estaBloqueado(slot, bloqueos) {
+  return (bloqueos || []).some(b => {
+    if (b.diaCompleto) return true;
+    if (!b.horaInicio || !b.horaFin) return false;
+    return slot.horaInicio >= b.horaInicio && slot.horaInicio < b.horaFin;
+  });
+}
+
+async function obtenerDisponibilidad(inicio, fin, duracionMinutos) {
+  if (!window._db) throw new Error('Firestore no inicializado');
+
+  const profSnap = await window._db.collection('profesionales')
+    .where('rol', '==', 'tecnologo')
+    .where('activo', '==', true)
+    .get();
+  const profesionales = profSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  const horariosSnap = await window._db.collection('horarios').get();
+  const horariosPorProf = {};
+  horariosSnap.docs.forEach(d => { horariosPorProf[d.data().profesionalId] = d.data(); });
+
+  const citasSnap = await window._db.collection('citas')
+    .where('fecha', '>=', firebase.firestore.Timestamp.fromDate(inicio))
+    .where('fecha', '<=', firebase.firestore.Timestamp.fromDate(fin))
+    .where('estado', 'in', ['solicitada', 'confirmada'])
+    .get();
+  const citas = citasSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  const bloqueosSnap = await window._db.collection('bloqueos')
+    .where('fecha', '>=', firebase.firestore.Timestamp.fromDate(inicio))
+    .where('fecha', '<=', firebase.firestore.Timestamp.fromDate(fin))
+    .get();
+  const bloqueos = bloqueosSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  const dias = [];
+  const cur = new Date(inicio);
+  while (cur <= fin) { dias.push(new Date(cur)); cur.setDate(cur.getDate() + 1); }
+
+  const resultado = [];
+  for (const dia of dias) {
+    const diaSemana = dia.getDay();
+    const fechaStr = toFechaStr(dia);
+    for (const prof of profesionales) {
+      const horario = horariosPorProf[prof.id];
+      if (!horario) continue;
+      if (Array.isArray(horario.diasSemana) && !horario.diasSemana.includes(diaSemana)) continue;
+
+      const slots = generarSlots(
+        dia,
+        horario.horaInicio,
+        horario.horaFin,
+        duracionMinutos,
+        horario.tiempoMuertoMinutos || 0
+      );
+
+      const citasProf = citas.filter(c =>
+        c.profesionalId === prof.id &&
+        c.fecha && c.fecha.toDate && toFechaStr(c.fecha.toDate()) === fechaStr
+      );
+      const bloqueosProf = bloqueos.filter(b =>
+        b.profesionalId === prof.id &&
+        b.fecha && b.fecha.toDate && toFechaStr(b.fecha.toDate()) === fechaStr
+      );
+
+      const slotsLibres = slots.filter(s =>
+        !estaOcupado(s, citasProf, duracionMinutos) &&
+        !estaBloqueado(s, bloqueosProf)
+      );
+
+      if (slotsLibres.length) {
+        resultado.push({
+          fecha: fechaStr,
+          diaNombre: dia.toLocaleDateString('es-CL', { weekday:'long', day:'numeric', month:'long' }),
+          profesional: {
+            id: prof.id,
+            nombre: prof.nombre || prof.displayName || 'Tecnólogo',
+            color: prof.color || '#0E7490',
+            rol: prof.rol || 'tecnologo',
+          },
+          slots: slotsLibres,
+        });
+      }
+    }
+  }
+
+  return resultado;
+}
+
+function PasoDisponibilidad({ tipo, onSeleccionar, onBack }) {
+  const [cargando, setCargando] = useState(true);
+  const [data, setData] = useState([]);
+  const [slotActivo, setSlotActivo] = useState('');
+  const [semanaOffset, setSemanaOffset] = useState(0);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        setCargando(true);
+        const hoy = new Date();
+        const inicio = new Date(hoy);
+        inicio.setDate(inicio.getDate() + semanaOffset * 7);
+        if (semanaOffset === 0) inicio.setDate(inicio.getDate() + 1);
+        const fin = new Date(inicio); fin.setDate(fin.getDate() + 13);
+        const disp = await obtenerDisponibilidad(inicio, fin, 30);
+        if (!alive) return;
+        setData(disp);
+      } catch (e) {
+        console.error(e);
+        if (alive) setData([]);
+      } finally {
+        if (alive) setCargando(false);
+      }
+    })();
+    return () => { alive = false; };
+  }, [semanaOffset]);
+
+  if (cargando) {
+    return (
+      <div style={{ textAlign:'center', padding:48 }}>
+        <svg width="32" height="32" viewBox="0 0 32 32" style={{ animation:'spin 1s linear infinite' }}>
+          <circle cx="16" cy="16" r="12" stroke="#0E7490" strokeWidth="2.5" strokeDasharray="40 20" strokeLinecap="round" fill="none"/>
+        </svg>
+        <p style={{ fontSize:13, color:'#64748b', marginTop:12 }}>
+          Buscando horas disponibles...
+        </p>
+        <style>{`@keyframes spin { to { transform:rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
+
+  const porFecha = {};
+  data.forEach(g => { if (!porFecha[g.fecha]) porFecha[g.fecha] = []; porFecha[g.fecha].push(g); });
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', flex:1 }}>
+      <p style={{ fontSize:14, fontWeight:600, color:'#0f172a', margin:'0 0 4px' }}>
+        {tipo?.label || 'Ecografía'}
+      </p>
+      <p style={{ fontSize:13, color:'#64748b', margin:'0 0 16px' }}>
+        Selecciona una hora disponible
+      </p>
+
+      {Object.keys(porFecha).length === 0 ? (
+        <div style={{ textAlign:'center', padding:32 }}>
+          <p style={{ fontSize:14, color:'#64748b', marginBottom:16 }}>
+            No hay horas disponibles en este período
+          </p>
+          <button onClick={() => setSemanaOffset(o => o + 2)}
+            style={{ padding:'10px 20px', borderRadius:10, border:'1px solid #0E7490', background:'none', color:'#0E7490', fontSize:13, cursor:'pointer' }}>
+            Ver semanas siguientes →
+          </button>
+        </div>
+      ) : (
+        <>
+          <div style={{ overflowY:'auto', paddingBottom:10 }}>
+            {Object.entries(porFecha).map(([fecha, grupos]) => (
+              <div key={fecha} style={{ marginBottom:20 }}>
+                <p style={{ fontSize:11, fontWeight:700, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'.06em', marginBottom:10 }}>
+                  {grupos[0].diaNombre}
+                </p>
+
+                {grupos.map(grupo => (
+                  <div key={grupo.profesional.id} style={{ marginBottom:14 }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
+                      <div style={{ width:28, height:28, borderRadius:'50%', background: grupo.profesional.color || '#0E7490', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:700, color:'#fff', flexShrink:0 }}>
+                        {(grupo.profesional.nombre || 'T')
+                          .split(' ').map(n => n[0]).join('').slice(0,2)}
+                      </div>
+                      <p style={{ fontSize:13, fontWeight:600, color:'#0f172a', margin:0 }}>
+                        {grupo.profesional.nombre}
+                      </p>
+                      <span style={{ fontSize:11, color:'#94a3b8', marginLeft:'auto' }}>
+                        {grupo.slots.length} hora{grupo.slots.length !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+
+                    <div style={{ display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:6 }}>
+                      {grupo.slots.map(slot => {
+                        const key = `${grupo.profesional.id}-${fecha}-${slot.horaInicio}`;
+                        const seleccionado = slotActivo === key;
+                        return (
+                          <button
+                            key={slot.horaInicio}
+                            onClick={() => {
+                              setSlotActivo(key);
+                              onSeleccionar({ grupo, slot });
+                            }}
+                            style={{
+                              padding:'8px 0',
+                              borderRadius:8,
+                              border: seleccionado ? '1.5px solid #0E7490' : '0.5px solid #E5E7EB',
+                              background: seleccionado ? '#0E7490' : '#fff',
+                              color: seleccionado ? '#fff' : '#0f172a',
+                              fontSize:13,
+                              fontWeight:600,
+                              cursor:'pointer',
+                              transition:'all .15s',
+                            }}>
+                            {slot.horaInicio}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <button onClick={() => setSemanaOffset(o => o + 2)}
+            style={{ width:'100%', padding:'12px 0', borderRadius:10, border:'0.5px solid #E5E7EB', background:'transparent', color:'#64748b', fontSize:13, cursor:'pointer', marginTop:6 }}>
+            Ver más fechas →
+          </button>
+
+          <div style={{ display:'flex', gap:8, marginTop:12 }}>
+            <BtnSecundario label="← Atrás" onClick={onBack} />
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ── Step 3: Confirmación ───────────────────────────────────────────────────
+
+function CampoResumen({ label, valor }) {
+  return (
+    <div>
+      <p style={{ fontSize:11, fontWeight:700, color:'#9CA3AF', margin:'0 0 2px', textTransform:'uppercase', letterSpacing:'0.04em' }}>{label}</p>
+      <p style={{ fontSize:14, color:'#0f172a', margin:0, fontWeight:500 }}>{valor}</p>
+    </div>
+  );
+}
+
+function PasoConfirmacion({ tipo, datos, onEnviar, onBack, enviando }) {
+  const resumen = datos?.slotElegido
+    ? `${new Date(datos.slotElegido.timestamp).toLocaleDateString('es-CL', { weekday:'long', day:'numeric', month:'long' })} · ${datos.slotElegido.horaInicio}`
+    : '—';
+  const u = window.currentUser;
+  return (
+    <div style={{ display:'flex', flexDirection:'column', flex:1, gap:14, overflowY:'auto' }}>
+      <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+        <span style={{ fontSize:20 }}>✅</span>
+        <p style={{ fontSize:15, fontWeight:700, color:'#0f172a', margin:0 }}>Revisa tu solicitud</p>
+      </div>
+      <div style={{ background:'#F9FAFB', borderRadius:12, padding:16, border:'1px solid #E5E7EB', display:'flex', flexDirection:'column', gap:12 }}>
+        <CampoResumen label="Tipo de atención" valor={tipo?.label} />
+        <div style={{ height:1, background:'#E5E7EB' }} />
+        <CampoResumen label="Hora seleccionada" valor={resumen} />
+        <div style={{ height:1, background:'#E5E7EB' }} />
+        <CampoResumen label="Tecnólogo" valor={datos?.profesionalNombre || '—'} />
+        <div style={{ height:1, background:'#E5E7EB' }} />
+        <CampoResumen label="Tus datos" valor={u ? `${u.name} · ${u.rut}` : 'Paciente'} />
+      </div>
+      <div style={{ display:'flex', gap:8, marginTop:'auto', paddingTop:4 }}>
+        <BtnSecundario label="← Atrás" onClick={onBack} />
+        <button onClick={onEnviar} disabled={enviando}
+          style={{ flex:2, padding:'13px 0', background:'#0E7490', color:'#fff', border:'none', borderRadius:12, fontSize:14, fontWeight:600, cursor:enviando?'wait':'pointer', opacity:enviando?0.75:1, transition:'opacity 0.2s' }}>
+          {enviando ? 'Enviando...' : 'Enviar solicitud'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Bottom Sheet ───────────────────────────────────────────────────────────
+
+function BottomSheet({ onCerrar, onExito }) {
+  // Flujo simple: prestación → ver horas → confirmar
+  const [paso, setPaso]         = useState(1); // 1=selección (prestación + hora), 2=confirmación
+  const [tipoAtencion, setTipoAtencion] = useState('');
+  const [slotElegido, setSlotElegido] = useState(null); // { profesional, fecha, diaNombre, slotElegido:{horaInicio,timestamp} }
+  const [enviando, setEnviando] = useState(false);
+  const [visible, setVisible]   = useState(false);
+  const [dragY, setDragY]       = useState(0);
+  const touchY0 = useRef(0);
+
+  useEffect(() => { requestAnimationFrame(() => setVisible(true)); }, []);
+
+  function cerrar() { setVisible(false); setTimeout(onCerrar, 320); }
+
+  function onTouchStart(e) { touchY0.current = e.touches[0].clientY; }
+  function onTouchMove(e)  { const d = e.touches[0].clientY - touchY0.current; if (d > 0) setDragY(d); }
+  function onTouchEnd()    { dragY > 100 ? cerrar() : setDragY(0); }
+
+  function volverASeleccion() {
+    setPaso(1);
+    setSlotElegido(null);
+  }
+
+  async function enviar() {
+    if (!window._db || !window.currentUser) {
+      showToast('Error de conexión','❌');
+      return;
+    }
+    if (!tipoAtencion) {
+      showToast('Selecciona una prestación','🔎');
+      return;
+    }
+    if (!slotElegido?.slotElegido?.timestamp || !slotElegido?.profesional?.id) {
+      showToast('Selecciona una hora disponible','⏱️');
+      return;
+    }
+    setEnviando(true);
+    try {
+      const rutCanonico = window.currentUser.rut;
+
+      // Concurrencia: verificar que el slot sigue libre
+      const margenInicio = new Date(slotElegido.slotElegido.timestamp);
+      margenInicio.setMinutes(margenInicio.getMinutes() - 1);
+      const margenFin = new Date(slotElegido.slotElegido.timestamp);
+      margenFin.setMinutes(margenFin.getMinutes() + 1);
+
+      const conflicto = await window._db.collection('citas')
+        .where('profesionalId', '==', slotElegido.profesional.id)
+        .where('fecha', '>=', firebase.firestore.Timestamp.fromDate(margenInicio))
+        .where('fecha', '<=', firebase.firestore.Timestamp.fromDate(margenFin))
+        .where('estado', 'in', ['solicitada', 'confirmada'])
+        .get();
+
+      if (!conflicto.empty) {
+        throw new Error('SLOT_OCUPADO');
+      }
+
+      await window._db.collection('citas').add({
+        pacienteRut:      rutCanonico,
+        pacienteNombre:   window.currentUser.name,
+        pacienteTelefono: '', // Puedes agregar teléfono si está disponible en el user
+        profesionalId:     slotElegido.profesional.id,
+        profesionalNombre: slotElegido.profesional.nombre,
+        profesionalRol:    slotElegido.profesional.rol || 'tecnologo',
+        tipoAtencion:      tipoAtencion,
+        fecha:             firebase.firestore.Timestamp.fromDate(slotElegido.slotElegido.timestamp),
+        duracionMinutos:   30,
+        box:               'Of. 408, Medio Oriente 831',
+        estado:            'confirmada',
+        visiblePaciente:  true,
+        creadoEn:         firebase.firestore.FieldValue.serverTimestamp(),
+        actualizadoEn:    firebase.firestore.FieldValue.serverTimestamp(),
+        origenCita:       'app_paciente',
+      });
+      
+      setEnviando(false);
+      cerrar();
+      setTimeout(() => onExito({ label: tipoAtencion }, slotElegido), 340);
+    } catch(err) {
+      console.error(err);
+      setEnviando(false);
+      if (String(err?.message) === 'SLOT_OCUPADO') {
+        showToast('Esa hora ya fue tomada. Elige otra.','⚠️');
+        volverASeleccion();
+      } else {
+        showToast('Error al agendar','❌');
+      }
+    }
+  }
+
+  return (
+    <div onClick={e => { if (e.target===e.currentTarget) cerrar(); }}
+      style={{ position:'fixed', inset:0, zIndex:10000, background:'rgba(0,0,0,0.45)', backdropFilter:'blur(4px)', WebkitBackdropFilter:'blur(4px)', display:'flex', flexDirection:'column', justifyContent:'flex-end', opacity:visible?1:0, transition:'opacity 0.28s ease' }}>
+
+      <div style={{ background:'#fff', borderRadius:'20px 20px 0 0', maxHeight:'92dvh', display:'flex', flexDirection:'column', overflow:'hidden', transform:visible?`translateY(${dragY}px)`:'translateY(100%)', transition:dragY>0?'transform 0s':'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)', paddingBottom:'env(safe-area-inset-bottom, 16px)' }}>
+
+        {/* Drag handle — touch solo en el handle */}
+        <div style={{ display:'flex', justifyContent:'center', padding:'12px 0 4px', touchAction:'none', flexShrink:0, cursor:'grab' }}
+          onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+          <div style={{ width:36, height:4, background:'#D1D5DB', borderRadius:2 }} />
+        </div>
+
+        {/* Barra progreso */}
+        <div style={{ padding:'0 20px 10px', flexShrink:0 }}>
+          <div style={{ height:3, background:'#E5E7EB', borderRadius:2, overflow:'hidden' }}>
+            <div style={{ height:'100%', width:`${paso === 1 ? 50 : 100}%`, background:'#0E7490', borderRadius:2, transition:'width 0.35s cubic-bezier(0.34,1.56,0.64,1)' }} />
+          </div>
+        </div>
+
+        {/* Header */}
+        <div style={{ display:'flex', alignItems:'center', padding:'0 20px 14px', borderBottom:'1px solid #F3F4F6', flexShrink:0 }}>
+          <div style={{ width:56 }}>
+            {paso > 1 && (
+              <button onClick={() => setPaso(p => p-1)} style={{ background:'none', border:'none', cursor:'pointer', padding:0, color:'#9CA3AF', fontSize:13 }}>← Atrás</button>
+            )}
+          </div>
+          <div style={{ flex:1, textAlign:'center' }}>
+            <p style={{ margin:0, fontSize:14, fontWeight:700, color:'#0f172a' }}>Agendar</p>
+            <p style={{ margin:0, fontSize:11, color:'#9CA3AF' }}>{paso === 1 ? 'Elige prestación y hora' : 'Confirma tu cita'}</p>
+          </div>
+          <div style={{ width:56, display:'flex', justifyContent:'flex-end' }}>
+            <button onClick={cerrar} style={{ background:'none', border:'none', cursor:'pointer', padding:4, color:'#9CA3AF', display:'flex', alignItems:'center', width:28, height:28, borderRadius:'50%', justifyContent:'center' }}>
+              <svg viewBox="0 0 24 24" style={{ width:16, height:16, stroke:'currentColor', fill:'none', strokeWidth:2, strokeLinecap:'round' }}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Contenido del paso */}
+        <div style={{ padding:'18px 20px 8px', flex:1, overflowY:'auto', display:'flex', flexDirection:'column', minHeight:0 }}>
+          {paso === 1 && (
+            <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+              <div>
+                <p style={{ fontSize:12, fontWeight:700, color:'#9CA3AF', margin:'0 0 8px', textTransform:'uppercase', letterSpacing:'0.05em' }}>
+                  Prestación
+                </p>
+                <select
+                  value={tipoAtencion}
+                  onChange={(e) => setTipoAtencion(e.target.value)}
+                  style={{
+                    width:'100%',
+                    padding:'12px 12px',
+                    borderRadius:12,
+                    border:'1px solid #E5E7EB',
+                    background:'#fff',
+                    fontSize:13,
+                    outline:'none',
+                  }}
+                >
+                  <option value="">Selecciona una prestación…</option>
+                  {PRESTACIONES_ECO.map(p => (
+                    <option key={p.id} value={p.label}>{p.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <PasoDisponibilidad
+                tipo={{ label: tipoAtencion || 'Ecografía' }}
+                onBack={() => {}}
+                onSeleccionar={({ grupo, slot }) => {
+                  setSlotElegido({ ...grupo, slotElegido: slot });
+                  setPaso(2);
+                }}
+              />
+            </div>
+          )}
+
+          {paso === 2 && slotElegido && (
+            <div>
+              <p style={{ fontSize:15, fontWeight:700, color:'#0f172a', margin:'0 0 14px' }}>Confirma tu cita</p>
+
+              <div style={{ background:'#F9FAFB', borderRadius:12, padding:'16px 18px', marginBottom:16, border:'1px solid #E5E7EB' }}>
+                {[
+                  { label:'Tipo de atención', valor: tipoAtencion },
+                  { label:'Profesional',      valor: slotElegido.profesional.nombre },
+                  { label:'Fecha',            valor: slotElegido.diaNombre },
+                  { label:'Hora',             valor: slotElegido.slotElegido.horaInicio },
+                  { label:'Lugar',            valor: 'Of. 408, Medio Oriente 831' },
+                ].map(({ label, valor }) => (
+                  <div key={label} style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'0.5px solid #E5E7EB', gap:12 }}>
+                    <span style={{ fontSize:12, color:'#64748b' }}>{label}</span>
+                    <span style={{ fontSize:12, fontWeight:600, color:'#0f172a', textAlign:'right' }}>{valor}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ background:'#FFF7ED', border:'1px solid #FED7AA', borderRadius:10, padding:'10px 14px', marginBottom:16, fontSize:12, color:'#92400E', lineHeight:1.6 }}>
+                ⚠️ La cita quedará confirmada. Para cancelar, hazlo con al menos 2 horas de anticipación desde la sección Citas.
+              </div>
+
+              <button
+                onClick={enviar}
+                disabled={enviando}
+                style={{
+                  width:'100%',
+                  padding:'14px 0',
+                  borderRadius:12,
+                  border:'none',
+                  background:'#0E7490',
+                  color:'#fff',
+                  fontSize:15,
+                  fontWeight:700,
+                  cursor: enviando ? 'not-allowed' : 'pointer',
+                  opacity: enviando ? 0.7 : 1,
+                  display:'flex',
+                  alignItems:'center',
+                  justifyContent:'center',
+                  gap:8,
+                }}
+              >
+                {enviando ? (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 14 14" style={{ animation:'spin .8s linear infinite' }}>
+                      <circle cx="7" cy="7" r="5.5" stroke="#fff" strokeWidth="1.5" strokeDasharray="20 14" strokeLinecap="round" fill="none"/>
+                    </svg>
+                    Confirmando...
+                    <style>{`@keyframes spin { to { transform:rotate(360deg); } }`}</style>
+                  </>
+                ) : 'Confirmar cita'}
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div style={{ height:8, flexShrink:0 }} />
+      </div>
+    </div>
+  );
+}
+
+// ── Tarjeta de cita ────────────────────────────────────────────────────────
+
+function TarjetaCita({ cita, delay }) {
+  const e = BADGE[cita.estado] || BADGE.realizada;
+  return (
+    <div className="card appointment-card tarjeta-cita" style={{ animationDelay:`${delay}ms`, marginBottom:'.75rem' }}>
+      <div className="apt-head">
+        <div className="apt-time">
+          {cita.fecha ? (
+             <>
+               <div className="t">{new Date(cita.fecha.seconds * 1000).toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'})}</div>
+               <div className="ampm">{new Date(cita.fecha.seconds * 1000).getHours() >= 12 ? 'PM' : 'AM'}</div>
+             </>
+          ) : (
+             <>
+               <div className="t">—</div>
+               <div className="ampm">PDTE</div>
+             </>
+          )}
+        </div>
+        <div className="apt-divider-v" />
+        <div className="apt-info">
+          <div className="apt-type">{cita.tipoAtencion}</div>
+          <div className="apt-doctor">{cita.profesionalNombre || 'Por asignar'}</div>
+          <div className="apt-location">
+            <svg viewBox="0 0 24 24" style={{ width:12, height:12, fill:'none', stroke:'currentColor', strokeWidth:2, strokeLinecap:'round', flexShrink:0 }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            {cita.box || 'Pendiente de confirmación'}
+          </div>
+        </div>
+        <div className="apt-status">
+          <span style={{ fontSize:'.7rem', fontWeight:700, padding:'.25rem .75rem', borderRadius:99, background:e.bg, color:e.color, whiteSpace:'nowrap', display:'inline-block' }}>{e.label}</span>
+        </div>
+      </div>
+      {(cita.estado === 'confirmada' || cita.estado === 'solicitada') && (
+        <div className="apt-actions">
+          <button className="btn btn-outline" style={{ display:'flex', alignItems:'center', gap:5 }} onClick={() => showToast('Recordatorio activado','🔔')}>
+            <svg viewBox="0 0 24 24" style={{ width:13, height:13, fill:'none', stroke:'currentColor', strokeWidth:1.8, strokeLinecap:'round', flexShrink:0 }}><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Recordatorio
+          </button>
+          <button className="btn btn-outline" style={{ display:'flex', alignItems:'center', gap:5 }} onClick={() => showToast('Abriendo Maps...','📍')}>
+            <svg viewBox="0 0 24 24" style={{ width:13, height:13, fill:'none', stroke:'currentColor', strokeWidth:1.8, strokeLinecap:'round', flexShrink:0 }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Cómo llegar
+          </button>
+          <button className="btn btn-ghost btn-danger" style={{ display:'flex', alignItems:'center', gap:4 }} onClick={() => showToast('Solicitud de cancelación enviada','⚠️')}>
+            <svg viewBox="0 0 24 24" style={{ width:13, height:13, fill:'none', stroke:'currentColor', strokeWidth:1.8, strokeLinecap:'round', flexShrink:0 }}><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            Cancelar
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Calendario horizontal (React) ──────────────────────────────────────────
+
+function CalendarioReact() {
+  const hoy  = new Date();
+  const DOWS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const [activo, setActivo] = useState(0);
+  const dias = [];
+  for (let i = -2; i <= 10; i++) {
+    const d = new Date(hoy); d.setDate(hoy.getDate() + i);
+    dias.push({ i, dom:d.getDate(), dow:DOWS[d.getDay()], esHoy:i===0, tieneEvento:i===3 });
+  }
+  return (
+    <div style={{ display:'flex', gap:'.5rem', overflowX:'auto', padding:'.25rem .1rem .75rem', marginBottom:'1rem', scrollSnapType:'x mandatory', WebkitOverflowScrolling:'touch', msOverflowStyle:'none', scrollbarWidth:'none' }}>
+      {dias.map(({ i, dom, dow, esHoy, tieneEvento }) => {
+        const on = activo === i;
+        return (
+          <div key={i} onClick={() => setActivo(i)}
+            style={{ flexShrink:0, width:52, display:'flex', flexDirection:'column', alignItems:'center', padding:'.65rem .4rem', borderRadius:12, border:`1.5px solid ${on?'#0E7490':'#e2e8f0'}`, background:on?'#0E7490':'#fff', cursor:'pointer', transition:'all 0.18s', scrollSnapAlign:'center', WebkitTapHighlightColor:'transparent' }}>
+            <span style={{ fontSize:'.65rem', fontWeight:600, color:on?'rgba(255,255,255,0.75)':'#94a3b8', textTransform:'uppercase', letterSpacing:'.05em' }}>{dow}</span>
+            <span style={{ fontSize:'1.1rem', fontWeight:700, margin:'.1rem 0', color:on?'#fff':(esHoy?'#0E7490':'#0f172a') }}>{dom}</span>
+            <div style={{ width:5, height:5, borderRadius:'50%', background:on?'#fff':'#0E7490', opacity:tieneEvento?1:0 }} />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── CitasApp (raíz) ────────────────────────────────────────────────────────
+
+function CitasApp() {
+  const [citas, setCitas]   = useState([]);
+  const [sheet, setSheet]   = useState(false);
+
+  useEffect(() => {
+    if (!window._db || !window.currentUser) return;
+    const rutLimpio = window.currentUser.rut.replace(/[^0-9kK]/g, '').toUpperCase();
+    
+    // Convert to canonical RUT structure used by normalizarRut
+    const body = rutLimpio.slice(0, -1);
+    const dv = rutLimpio.slice(-1);
+    const formattedBody = body.split('').reverse().reduce((acc, d, i) => (i % 3 === 0 && i !== 0) ? d + '.' + acc : d + acc, '');
+    const canonicalRut = `${formattedBody}-${dv}`;
+    
+    const unsub = window._db.collection('citas')
+      .where('pacienteRut', '==', canonicalRut)
+      .where('visiblePaciente', '==', true)
+      .orderBy('creadoEn', 'desc')
+      .onSnapshot(snap => {
+        const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        setCitas(data);
+      });
+      
+    return () => unsub();
+  }, []);
+
+  const proximas  = citas.filter(c => c.estado === 'confirmada' || c.estado === 'solicitada');
+  const historial = citas.filter(c => c.estado === 'realizada'  || c.estado === 'cancelada');
+
+  function onExito(tipo, datos) {
+    showToast('Cita confirmada', '✅');
+  }
+
+  return (
+    <div className="page-inner">
+      <div className="sec-head" style={{ marginBottom:'.85rem' }}><h2>Mis citas</h2></div>
+
+      <CalendarioReact />
+
+      {proximas.length > 0 && (
+        <>
+          <div className="sec-head">
+            <h2 style={{ fontSize:'1rem', fontFamily:'Figtree,sans-serif', fontStyle:'normal', fontWeight:600 }}>Próximas</h2>
+          </div>
+          {proximas.map((c, i) => <TarjetaCita key={c.id} cita={c} delay={i * 65} />)}
+        </>
+      )}
+
+      {historial.length > 0 && (
+        <>
+          <div className="sec-head" style={{ marginTop:'.75rem' }}>
+            <h2 style={{ fontSize:'1rem', fontFamily:'Figtree,sans-serif', fontStyle:'normal', fontWeight:600, color:'var(--muted)' }}>Historial</h2>
+          </div>
+          {historial.map((c, i) => <TarjetaCita key={c.id} cita={c} delay={i * 65} />)}
+        </>
+      )}
+
+      <div className="new-apt-banner" onClick={() => setSheet(true)} style={{ marginTop:'.5rem' }}>
+        <div className="nab-icon">📅</div>
+        <div className="nab-title">Agendar ahora</div>
+        <div className="nab-sub">Elige tu hora disponible y confirma</div>
+      </div>
+
+      {sheet && <BottomSheet onCerrar={() => setSheet(false)} onExito={onExito} />}
+    </div>
+  );
+}
+
+// ── ResultadosApp ──────────────────────────────────────────────────────────
+
+function ResultadosApp() {
+  const [resultados, setResultados] = useState([]);
+  const [filtro, setFiltro] = useState('todos');
+
+  useEffect(() => {
+    if (!window._db || !window.currentUser) return;
+    const rutLimpio = window.currentUser.rut.replace(/[^0-9kK]/g, '').toUpperCase();
+    
+    // Convert to canonical RUT structure used by normalizarRut
+    const body = rutLimpio.slice(0, -1);
+    const dv = rutLimpio.slice(-1);
+    const formattedBody = body.split('').reverse().reduce((acc, d, i) => (i % 3 === 0 && i !== 0) ? d + '.' + acc : d + acc, '');
+    const canonicalRut = `${formattedBody}-${dv}`;
+    
+    const unsub = window._db.collection('resultados')
+      .where('pacienteRut', '==', canonicalRut)
+      .where('visiblePaciente', '==', true)
+      .orderBy('creadoEn', 'desc')
+      .onSnapshot(snap => {
+        setResultados(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      });
+      
+    return () => unsub();
+  }, []);
+
+  const filtrados = resultados.filter(r => filtro === 'todos' || r.categoria === filtro || (r.tipo && r.tipo.toLowerCase().includes(filtro)));
+
+  function handleToggle(e) {
+    const card = e.currentTarget.closest('.card');
+    const body = card.querySelector('.expand-body');
+    if (body) body.classList.toggle('open');
+  }
+
+  return (
+    <div className="page-inner">
+      <div className="sec-head" style={{ marginBottom: '.85rem' }}>
+        <h2>Mis resultados</h2>
+      </div>
+      <div className="filter-row">
+        <div className={`filter-chip ${filtro === 'todos' ? 'active' : ''}`} onClick={() => setFiltro('todos')}>Todos</div>
+        <div className={`filter-chip ${filtro === 'eco' ? 'active' : ''}`} onClick={() => setFiltro('eco')}>Ecografía</div>
+      </div>
+
+      {filtrados.length === 0 && (
+        <div className="empty-state" style={{ marginTop: '2rem' }}>
+          <div className="es-icon">📄</div>
+          <p>No tienes resultados disponibles.</p>
+        </div>
+      )}
+
+      {filtrados.map((r, i) => {
+        let dateStr = 'Sin fecha';
+        if (r.creadoEn && r.creadoEn.seconds) {
+          const d = new Date(r.creadoEn.seconds * 1000);
+          dateStr = d.toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
+        } else if (r.fecha) {
+          dateStr = r.fecha;
+        }
+
+        return (
+          <div key={r.id} className="card result-full" data-cat="eco" style={{ animationDelay: `${i * 60}ms` }}>
+            <div className="rf-head" onClick={handleToggle}>
+              <div className="rf-icon" style={{ background: '#e0f2fe' }}>
+                <svg viewBox="0 0 24 24" style={{ stroke: '#0891b2' }}><ellipse cx="12" cy="12" rx="10" ry="6"/><path d="M12 6c2 3.5 2 8.5 0 12"/><path d="M2 12h20"/></svg>
+              </div>
+              <div className="rf-meta">
+                <div className="rf-type">{r.tipo || 'Informe'} {r.region ? `- ${r.region}` : ''}</div>
+                <div className="rf-date">{dateStr}</div>
+                <div className="rf-doctor">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg> 
+                  {r.informante || 'Profesional'}
+                </div>
+                <div className="rf-badges">
+                  <span className="rf-badge normal">Completado</span>
+                </div>
+              </div>
+            </div>
+            <div className="expand-body">
+              <div className="expand-inner">
+                {r.indicacion && (
+                  <div className="field-group">
+                    <div className="fg-label">Indicación clínica</div>
+                    <div className="fg-value">{r.indicacion}</div>
+                  </div>
+                )}
+                {r.hallazgos && (
+                  <div className="field-group">
+                    <div className="fg-label">Hallazgos</div>
+                    <div className="fg-value">{r.hallazgos}</div>
+                  </div>
+                )}
+                {r.diagnostico && (
+                  <div className="field-group">
+                    <div className="fg-label">Impresión diagnóstica</div>
+                    <div className="fg-value">{r.diagnostico}</div>
+                  </div>
+                )}
+                <div className="expand-actions">
+                  <button className="btn btn-primary" onClick={() => window.showToast('Descargando PDF...','📄')}>
+                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Descargar PDF
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── Componentes de Perfil (React) ──────────────────────────────────────────
+
+function BottomSheetGeneric({ titulo, onCerrar, children }) {
+  const [visible, setVisible] = useState(false);
+  const [dragY, setDragY] = useState(0);
+  const startY = React.useRef(0);
+
+  useEffect(() => {
+    setVisible(true);
+  }, []);
+
+  function cerrar() {
+    setVisible(false);
+    setTimeout(onCerrar, 300);
+  }
+
+  function onTouchStart(e) { startY.current = e.touches[0].clientY; }
+  function onTouchMove(e) {
+    const d = e.touches[0].clientY - startY.current;
+    if (d > 0) setDragY(d);
+  }
+  function onTouchEnd() {
+    if (dragY > 100) cerrar();
+    else setDragY(0);
+  }
+
+  return (
+    <div onClick={e => { if (e.target===e.currentTarget) cerrar(); }}
+      style={{ position:'fixed', inset:0, zIndex:10000, background:'rgba(0,0,0,0.45)', backdropFilter:'blur(4px)', WebkitBackdropFilter:'blur(4px)', display:'flex', flexDirection:'column', justifyContent:'flex-end', opacity:visible?1:0, transition:'opacity 0.28s ease' }}>
+
+      <div style={{ background:'#fff', borderRadius:'20px 20px 0 0', maxHeight:'92dvh', display:'flex', flexDirection:'column', overflow:'hidden', transform:visible?`translateY(${dragY}px)`:'translateY(100%)', transition:dragY>0?'transform 0s':'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)', paddingBottom:'env(safe-area-inset-bottom, 16px)' }}>
+
+        <div style={{ display:'flex', justifyContent:'center', padding:'12px 0 4px', touchAction:'none', flexShrink:0, cursor:'grab' }}
+          onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+          <div style={{ width:36, height:4, background:'#D1D5DB', borderRadius:2 }} />
+        </div>
+
+        <div style={{ display:'flex', alignItems:'center', padding:'0 20px 14px', borderBottom:'1px solid #F3F4F6', flexShrink:0 }}>
+          <div style={{ flex:1 }}>
+            <p style={{ margin:0, fontSize:16, fontWeight:700, color:'#0f172a' }}>{titulo}</p>
+          </div>
+          <button onClick={cerrar} style={{ background:'none', border:'none', cursor:'pointer', padding:4, color:'#9CA3AF', display:'flex', alignItems:'center', width:28, height:28, borderRadius:'50%', justifyContent:'center' }}>
+            <svg viewBox="0 0 24 24" style={{ width:16, height:16, stroke:'currentColor', fill:'none', strokeWidth:2, strokeLinecap:'round' }}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <div style={{ padding:'18px 20px 24px', flex:1, overflowY:'auto', display:'flex', flexDirection:'column', minHeight:0 }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EditarContactoSheet({ paciente, uid, onCerrar, onGuardado }) {
+  const [telefono, setTelefono] = useState(paciente.telefono || '');
+  const [correo,   setCorreo]   = useState(paciente.correo   || '');
+  const [guardando, setGuardando] = useState(false);
+  const [error,     setError]     = useState('');
+
+  const telefonoValido = /^\+?[\d\s]{8,15}$/.test(telefono.trim());
+  const correoValido   = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.trim());
+  const puedeGuardar   = telefonoValido && correoValido &&
+    (telefono !== paciente.telefono || correo !== paciente.correo);
+
+  async function handleGuardar() {
+    setGuardando(true);
+    setError('');
+    try {
+      await window._db.collection('users').doc(uid).update({
+        telefono:          telefono.trim(),
+        correo:            correo.trim(),
+        contactoEditadoEn: firebase.firestore.FieldValue.serverTimestamp(),
+        ultimaModificacion: {
+          campo:  'contacto',
+          por:    'paciente',
+          fecha:  firebase.firestore.FieldValue.serverTimestamp(),
+        }
+      });
+      window.showToast('Datos actualizados correctamente', '✅');
+      onGuardado({ ...paciente, telefono, correo });
+    } catch(err) {
+      setError('No se pudo guardar. Intenta de nuevo.');
+      console.error(err);
+    } finally {
+      setGuardando(false);
+    }
+  }
+
+  return (
+    <div>
+      <div style={{
+        background: 'var(--amber-l)', border: '0.5px solid var(--amber)', borderRadius: 10, padding: '10px 14px',
+        fontSize: 12, color: 'var(--amber)', lineHeight: 1.6, marginBottom: 20,
+      }}>
+        Puedes actualizar tu teléfono y correo. Para corregir tu nombre, RUT o fecha de nacimiento, contáctanos — Ley N° 19.628 Art. 12.
+      </div>
+
+      {[
+        { label: 'Nombre completo', value: paciente.nombre || window.currentUser?.name },
+        { label: 'RUT',             value: paciente.rut || window.currentUser?.rut },
+        { label: 'Fecha de nacimiento', value: paciente.fechaNacimiento || '15/08/1987' },
+      ].map(({ label, value }) => (
+        <div key={label} style={{ marginBottom: 14, opacity: 0.6 }}>
+          <p style={{ fontSize: 11, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 4 }}>
+            {label} <span style={{ fontSize: 10 }}>(solo lectura)</span>
+          </p>
+          <div style={{ padding: '11px 14px', borderRadius: 10, background: 'var(--surface2)', border: '0.5px solid var(--border)', fontSize: 15, color: 'var(--text2)' }}>
+            {value}
+          </div>
+        </div>
+      ))}
+
+      <div style={{ marginBottom: 14 }}>
+        <p style={{ fontSize: 11, color: 'var(--text)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 4 }}>Teléfono</p>
+        <input type="tel" value={telefono} onChange={e => setTelefono(e.target.value)} placeholder="+56 9 1234 5678" inputMode="tel"
+          style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: `1px solid ${!telefonoValido && telefono.length > 3 ? '#ef4444' : 'var(--border2)'}`, background: 'var(--surface)', fontSize: 15, color: 'var(--text)', outline: 'none' }} />
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <p style={{ fontSize: 11, color: 'var(--text)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 4 }}>Correo electrónico</p>
+        <input type="email" value={correo} onChange={e => setCorreo(e.target.value)} placeholder="nombre@correo.cl" inputMode="email"
+          style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: `1px solid ${!correoValido && correo.length > 3 ? '#ef4444' : 'var(--border2)'}`, background: 'var(--surface)', fontSize: 15, color: 'var(--text)', outline: 'none' }} />
+      </div>
+
+      {error && <p style={{ fontSize: 12, color: '#ef4444', marginBottom: 12 }}>{error}</p>}
+
+      <div style={{ display: 'flex', gap: 10 }}>
+        <button onClick={onCerrar} style={{ flex: 1, padding: '12px 0', borderRadius: 10, border: '1px solid var(--border)', background: 'transparent', fontSize: 14, color: 'var(--text2)', cursor: 'pointer' }}>Cancelar</button>
+        <button onClick={handleGuardar} disabled={!puedeGuardar || guardando} style={{ flex: 2, padding: '12px 0', borderRadius: 10, border: 'none', background: puedeGuardar && !guardando ? 'var(--teal)' : 'var(--border2)', color: '#fff', fontSize: 14, fontWeight: 500, cursor: puedeGuardar && !guardando ? 'pointer' : 'not-allowed' }}>
+          {guardando ? 'Guardando...' : 'Guardar cambios'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function HistorialAtenciones({ rut }) {
+  const [atenciones, setAtenciones] = useState([]);
+  const [cargando,   setCargando]   = useState(true);
+
+  useEffect(() => {
+    if(!window._db) return;
+    
+    const rutLimpio = rut.replace(/[^0-9kK]/g, '').toUpperCase();
+    const body = rutLimpio.slice(0, -1);
+    const dv = rutLimpio.slice(-1);
+    const formattedBody = body.split('').reverse().reduce((acc, d, i) => (i % 3 === 0 && i !== 0) ? d + '.' + acc : d + acc, '');
+    const canonicalRut = `${formattedBody}-${dv}`;
+
+    const q = window._db.collection('citas')
+      .where('pacienteRut', '==', canonicalRut)
+      .where('estado', '==', 'realizada')
+      .orderBy('fecha', 'desc');
+      
+    q.get().then(snap => {
+      setAtenciones(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      setCargando(false);
+    }).catch(e => {
+      console.error(e);
+      setCargando(false);
+    });
+  }, [rut]);
+
+  if (cargando) return <p style={{ fontSize:14, color:'var(--muted)', textAlign:'center', padding:24 }}>Cargando historial...</p>;
+
+  return (
+    <div>
+      <div style={{ background:'var(--teal-xl)', border:'0.5px solid var(--teal)', borderRadius:10, padding:'10px 14px', fontSize:12, color:'var(--teal)', lineHeight:1.6, marginBottom:16 }}>
+        Historial de atenciones conforme al Art. 13, Ley N° 20.584. Para solicitar copia de tu ficha clínica completa, contáctanos.
+      </div>
+      
+      {!atenciones.length && (
+        <div style={{ textAlign:'center', padding:32 }}>
+          <p style={{ fontSize:14, color:'var(--muted)' }}>No hay atenciones registradas aún.</p>
+        </div>
+      )}
+
+      {atenciones.map(a => (
+        <div key={a.id} style={{ background:'var(--surface)', border:'1px solid var(--border)', borderRadius:12, padding:'14px 16px', marginBottom:10 }}>
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:6 }}>
+            <p style={{ fontSize:14, fontWeight:600, color:'var(--text)', margin:0 }}>{a.tipoAtencion}</p>
+            <span style={{ fontSize:11, padding:'3px 8px', borderRadius:20, background:'var(--surface2)', color:'var(--muted)' }}>
+              {a.estado === 'realizada' ? 'Realizada' : 'Cancelada'}
+            </span>
+          </div>
+          <p style={{ fontSize:13, color:'var(--text2)', margin:'0 0 2px' }}>{a.profesionalNombre || 'Profesional no asignado'}</p>
+          <p style={{ fontSize:12, color:'var(--muted)', margin:0 }}>
+            {a.fecha ? new Date(a.fecha.seconds * 1000).toLocaleDateString('es-CL', { day:'2-digit', month:'long', year:'numeric' }) : '-'}
+            {a.box ? ` · ${a.box}` : ''}
+          </p>
+        </div>
+      ))}
+
+      <div style={{ marginTop:16, padding:'12px 16px', background:'var(--surface2)', borderRadius:10, textAlign:'center' }}>
+        <p style={{ fontSize:12, color:'var(--text2)', lineHeight:1.6, margin:'0 0 8px' }}>Tienes derecho a solicitar copia de tu ficha clínica completa.</p>
+        <a href="mailto:contacto@vinamed.cl?subject=Solicitud copia ficha clínica" style={{ fontSize:13, color:'var(--teal)', fontWeight:600, textDecoration:'none' }}>Solicitar por correo →</a>
+      </div>
+    </div>
+  );
+}
+
+function AlergiasSheet({ uid, paciente }) {
+  const [alergiasClinicas,  setAlergiasClinicas]  = useState([]);
+  const [alergiasReportadas,setAlergiasReportadas] = useState([]);
+  const [nuevaAlergia,      setNuevaAlergia]       = useState('');
+  const [guardando,         setGuardando]          = useState(false);
+  const [cargando,          setCargando]           = useState(true);
+
+  useEffect(() => {
+    if(!window._db) return;
+    window._db.collection('users').doc(uid).get().then(snap => {
+      if (snap.exists) {
+        const data = snap.data();
+        setAlergiasClinicas(data.alergiasClinicas || []);
+        setAlergiasReportadas(data.alergiasReportadas || []);
+      }
+      setCargando(false);
+    });
+  }, [uid]);
+
+  async function handleAgregar() {
+    if (!nuevaAlergia.trim()) return;
+    setGuardando(true);
+    const nueva = {
+      descripcion: nuevaAlergia.trim(),
+      reportadoPor: 'paciente',
+      fecha: new Date().toISOString(),
+      validado: false,
+    };
+    const actualizadas = [...alergiasReportadas, nueva];
+    await window._db.collection('users').doc(uid).update({
+      alergiasReportadas: actualizadas,
+      actualizadoEn: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    setAlergiasReportadas(actualizadas);
+    setNuevaAlergia('');
+    setGuardando(false);
+  }
+
+  async function handleEliminarReportada(index) {
+    const actualizadas = alergiasReportadas.filter((_, i) => i !== index);
+    await window._db.collection('users').doc(uid).update({
+      alergiasReportadas: actualizadas,
+      actualizadoEn: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    setAlergiasReportadas(actualizadas);
+  }
+
+  if (cargando) return <p style={{ textAlign:'center', padding:24, fontSize:14, color:'var(--muted)' }}>Cargando...</p>;
+
+  return (
+    <div>
+      <div style={{ background:'var(--amber-l)', border:'0.5px solid var(--amber)', borderRadius:10, padding:'10px 14px', fontSize:12, color:'var(--amber)', lineHeight:1.6, marginBottom:20 }}>
+        Las alergias registradas por el centro son de solo lectura. Puedes reportar alergias adicionales — el equipo médico las revisará y validará. Ley N° 20.584 Art. 10.
+      </div>
+
+      <p style={{ fontSize:11, fontWeight:600, color:'var(--muted)', textTransform:'uppercase', letterSpacing:'.05em', marginBottom:8 }}>
+        Registradas por el centro
+      </p>
+
+      {alergiasClinicas.length === 0 ? (
+        <div style={{ padding:'12px 16px', borderRadius:10, background:'var(--surface2)', border:'0.5px solid var(--border)', fontSize:13, color:'var(--muted)', marginBottom:20 }}>
+          Ninguna registrada por el centro
+        </div>
+      ) : (
+        alergiasClinicas.map((a, i) => (
+          <div key={i} style={{ padding:'12px 16px', borderRadius:10, background:'var(--surface2)', border:'0.5px solid var(--border)', marginBottom:8, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <span style={{ fontSize:14, color:'var(--text)' }}>{typeof a === 'string' ? a : a.descripcion}</span>
+            <span style={{ fontSize:10, padding:'2px 8px', borderRadius:20, background:'var(--red-l)', color:'var(--red)' }}>Solo lectura</span>
+          </div>
+        ))
+      )}
+
+      <p style={{ fontSize:11, fontWeight:600, color:'var(--muted)', textTransform:'uppercase', letterSpacing:'.05em', marginBottom:8, marginTop:20 }}>
+        Reportadas por ti (pendientes de validación)
+      </p>
+
+      {alergiasReportadas.map((a, i) => (
+        <div key={i} style={{ padding:'12px 16px', borderRadius:10, background:'var(--surface)', border:'1px solid var(--border)', marginBottom:8, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <div>
+            <span style={{ fontSize:14, color:'var(--text)' }}>{a.descripcion}</span>
+            <span style={{ fontSize:10, padding:'2px 8px', borderRadius:20, marginLeft:8, background: a.validado ? 'var(--green-l)' : 'var(--amber-l)', color: a.validado ? 'var(--green)' : 'var(--amber)' }}>
+              {a.validado ? 'Validada' : 'Pendiente'}
+            </span>
+          </div>
+          {!a.validado && (
+            <button onClick={() => handleEliminarReportada(i)} style={{ background:'none', border:'none', cursor:'pointer', color:'var(--red)', fontSize:18 }}>×</button>
+          )}
+        </div>
+      ))}
+
+      <div style={{ marginTop:20 }}>
+        <p style={{ fontSize:12, color:'var(--text2)', marginBottom:8, lineHeight:1.5 }}>Reportar una alergia adicional:</p>
+        <div style={{ display:'flex', gap:8 }}>
+          <input value={nuevaAlergia} onChange={e => setNuevaAlergia(e.target.value)} placeholder="Ej: Penicilina, mariscos, látex..." onKeyDown={e => e.key === 'Enter' && handleAgregar()}
+            style={{ flex:1, padding:'11px 14px', borderRadius:10, border:'1px solid var(--border2)', background:'var(--surface)', fontSize:14, color:'var(--text)', outline:'none' }} />
+          <button onClick={handleAgregar} disabled={!nuevaAlergia.trim() || guardando}
+            style={{ padding:'11px 18px', borderRadius:10, border:'none', background: nuevaAlergia.trim() ? 'var(--teal)' : 'var(--border2)', color:'#fff', fontSize:14, fontWeight:500, cursor: nuevaAlergia.trim() ? 'pointer' : 'not-allowed' }}>
+            {guardando ? '...' : 'Agregar'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const CONFIG_DEFAULT = { notifPush: true, notifEmail: true, notifSMS: false, notifCitas: true, notifResultados: true, notifMensajes: true, idioma: 'es-CL', tamanoTexto: 'normal' };
+
+function ConfiguracionSheet({ uid }) {
+  const [config,    setConfig]    = useState(CONFIG_DEFAULT);
+  const [guardando, setGuardando] = useState(false);
+  const [guardado,  setGuardado]  = useState(false);
+  const [cargando,  setCargando]  = useState(true);
+
+  useEffect(() => {
+    if(!window._db) return;
+    window._db.collection('users').doc(uid).get().then(snap => {
+      if (snap.exists && snap.data().configuracion) {
+        setConfig({ ...CONFIG_DEFAULT, ...snap.data().configuracion });
+      }
+      setCargando(false);
+    });
+  }, [uid]);
+
+  function toggle(campo) { setConfig(prev => ({ ...prev, [campo]: !prev[campo] })); }
+
+  async function handleGuardar() {
+    setGuardando(true);
+    await window._db.collection('users').doc(uid).update({
+      configuracion: config,
+      actualizadoEn: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    setGuardando(false);
+    setGuardado(true);
+    setTimeout(() => setGuardado(false), 2500);
+  }
+
+  if (cargando) return null;
+
+  const Switch = ({ campo, label, desc }) => (
+    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 0', borderBottom:'1px solid var(--border)' }}>
+      <div>
+        <p style={{ fontSize:14, color:'var(--text)', margin:'0 0 2px', fontWeight:500 }}>{label}</p>
+        {desc && <p style={{ fontSize:12, color:'var(--muted)', margin:0 }}>{desc}</p>}
+      </div>
+      <div onClick={() => toggle(campo)} style={{ width:44, height:24, borderRadius:12, cursor:'pointer', background: config[campo] ? 'var(--teal)' : 'var(--border2)', position:'relative', transition:'background .2s', flexShrink:0 }}>
+        <div style={{ width:18, height:18, borderRadius:'50%', background:'#fff', position:'absolute', top:3, left: config[campo] ? 23 : 3, transition:'left .2s' }}/>
+      </div>
+    </div>
+  );
+
+  return (
+    <div>
+      <p style={{ fontSize:11, fontWeight:600, color:'var(--muted)', textTransform:'uppercase', letterSpacing:'.05em', marginBottom:4 }}>Canales de notificación</p>
+      <Switch campo="notifPush" label="Notificaciones push" desc="Alertas en tu dispositivo" />
+      <Switch campo="notifEmail" label="Correo electrónico" desc="Avisos a tu correo registrado" />
+      <Switch campo="notifSMS" label="SMS" desc="Mensajes de texto al teléfono registrado" />
+
+      <p style={{ fontSize:11, fontWeight:600, color:'var(--muted)', textTransform:'uppercase', letterSpacing:'.05em', marginTop:20, marginBottom:4 }}>Qué notificaciones recibir</p>
+      <Switch campo="notifCitas" label="Recordatorios de citas" desc="24h antes de tu cita" />
+      <Switch campo="notifResultados" label="Resultados disponibles" desc="Cuando el centro suba un informe" />
+      <Switch campo="notifMensajes" label="Mensajes del centro" desc="Avisos administrativos" />
+
+      <p style={{ fontSize:11, fontWeight:600, color:'var(--muted)', textTransform:'uppercase', letterSpacing:'.05em', marginTop:24, marginBottom:8 }}>Tamaño de texto</p>
+      <div style={{ display:'flex', gap:8, marginBottom:20 }}>
+        {[
+          { val:'pequeno', label:'A', size:12 },
+          { val:'normal',  label:'A', size:15 },
+          { val:'grande',  label:'A', size:18 },
+        ].map(({ val, label, size }) => (
+          <button key={val} onClick={() => setConfig(prev => ({ ...prev, tamanoTexto: val }))}
+            style={{ flex:1, padding:'10px 0', borderRadius:10, border: config.tamanoTexto === val ? '1.5px solid var(--teal)' : '1px solid var(--border)', background: config.tamanoTexto === val ? 'var(--teal-xl)' : 'var(--surface)', color: config.tamanoTexto === val ? 'var(--teal)' : 'var(--text2)', fontSize: size, fontWeight:600, cursor:'pointer' }}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {guardado && <div style={{ padding:'10px 14px', borderRadius:10, marginBottom:12, background:'var(--green-l)', border:'1px solid var(--green)', fontSize:13, color:'var(--green)', textAlign:'center', fontWeight:500 }}>Configuración guardada</div>}
+      <button onClick={handleGuardar} disabled={guardando} style={{ width:'100%', padding:'13px 0', borderRadius:12, border:'none', background:'var(--teal)', color:'#fff', fontSize:14, fontWeight:600, cursor: guardando ? 'not-allowed' : 'pointer', opacity: guardando ? 0.7 : 1 }}>
+        {guardando ? 'Guardando...' : 'Guardar configuración'}
+      </button>
+    </div>
+  );
+}
+
+// ── Componentes de Apoyo ──────────────────────────────────────────────────
+const FilaPerfil = ({ icon, label, value, onClick, bgColor, strokeColor }) => (
+  <div className="profile-row" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>
+    <div className="pr-icon" style={{ background: bgColor || '#e0f2fe' }}>
+       <svg viewBox="0 0 24 24" style={{ stroke: strokeColor || '#0891b2', fill: 'none', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' }}>{icon}</svg>
+    </div>
+    <div className="pr-label">{label}</div>
+    {value && <div className="pr-value">{value}</div>}
+    <div className="pr-arrow" style={{ opacity: onClick ? 1 : 0 }}>›</div>
+  </div>
+);
+
+const PERFIL_SHEETS = {
+  contacto:      { titulo: 'Editar datos de contacto', componente: EditarContactoSheet },
+  historial:     { titulo: 'Historial de atenciones',  componente: HistorialAtenciones },
+  alergias:      { titulo: 'Alergias registradas',     componente: AlergiasSheet      },
+  configuracion: { titulo: 'Configuración',            componente: ConfiguracionSheet  },
+};
+
+function PerfilApp() {
+  const [paciente, setPaciente] = useState(() => ({
+    nombre: window.currentUser?.name || '',
+    rut: window.currentUser?.rut || '',
+    fechaNacimiento: '15/08/1987',
+    telefono: '',
+    correo: '',
+    alergiasClinicas: [],
+    alergiasReportadas: []
+  }));
+  const [sheetActivo, setSheetActivo] = useState(null);
+  const [citasCount, setCitasCount] = useState(0);
+
+  useEffect(() => {
+    console.log("PerfilApp: Mount/Effect triggered", { uid: window.currentUid, user: !!window.currentUser });
+    if (!window._db || !window.currentUid) return;
+    
+    const docRef = window._db.collection('users').doc(window.currentUid);
+    docRef.get().then(snap => {
+      if (snap.exists) {
+        setPaciente(snap.data());
+      } else {
+        const initial = {
+          nombre: window.currentUser?.name || '',
+          rut: window.currentUser?.rut || '',
+          fechaNacimiento: '15/08/1987',
+          telefono: '',
+          correo: '',
+          alergiasClinicas: [],
+          alergiasReportadas: []
+        };
+        docRef.set(initial);
+        setPaciente(initial);
+      }
+    }).catch(e => console.error("PerfilApp: Error fetching user doc", e));
+
+    if(window.currentUser) {
+       try {
+         const rutLimpio = window.currentUser.rut.replace(/[^0-9kK]/g, '').toUpperCase();
+         const body = rutLimpio.slice(0, -1);
+         const dv = rutLimpio.slice(-1);
+         const formattedBody = body.split('').reverse().reduce((acc, d, i) => (i % 3 === 0 && i !== 0) ? d + '.' + acc : d + acc, '');
+         const canonicalRut = `${formattedBody}-${dv}`;
+         
+         window._db.collection('citas')
+           .where('pacienteRut', '==', canonicalRut)
+           .where('estado', '==', 'realizada')
+           .get().then(snap => setCitasCount(snap.size));
+       } catch (err) {
+         console.warn("PerfilApp: Error fetching history count", err);
+       }
+    }
+  }, []);
+
+  if (!window.currentUser) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '300px', color: 'var(--muted)', padding: 20, textAlign: 'center' }}>
+        <div style={{ fontSize: 40, marginBottom: 12 }}>👤</div>
+        <p style={{ fontSize: 14 }}>Inicia sesión para ver tu perfil</p>
+      </div>
+    );
+  }
+
+  const totalAlergias = (paciente.alergiasClinicas?.length || 0) + (paciente.alergiasReportadas?.length || 0);
+
+  return (
+    <div className="perfil-container" style={{ paddingBottom: 40 }}>
+      <div className="profile-header">
+        <div className="profile-avatar">{window.currentUser.initials}</div>
+        <div className="profile-name">{window.currentUser.name}</div>
+        <div className="profile-rut">{window.currentUser.rut}</div>
+      </div>
+
+      <div className="profile-body" style={{ marginTop: '-2rem' }}>
+        <div className="profile-card">
+          <FilaPerfil 
+            label="Fecha de nacimiento" 
+            value={paciente.fechaNacimiento} 
+            icon={<><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>} 
+            bgColor="#e0f2fe" strokeColor="#0891b2"
+          />
+          <FilaPerfil 
+            label="Teléfono" 
+            value={paciente.telefono || 'No registrado'} 
+            icon={<><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12"/><path d="M1.63 3.18A2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72"/></>}
+            bgColor="#f3e8ff" strokeColor="#7c3aed"
+          />
+          <FilaPerfil 
+            label="Correo" 
+            value={paciente.correo || 'No registrado'} 
+            icon={<><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></>}
+            bgColor="#fef3c7" strokeColor="#d97706"
+          />
+          <FilaPerfil 
+            label="Editar datos de contacto" 
+            onClick={() => setSheetActivo('contacto')}
+            icon={<><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></>}
+            bgColor="#f1f5f9" strokeColor="var(--muted)"
+          />
+        </div>
+
+        <div className="profile-card">
+          <FilaPerfil 
+            label="Historial de atenciones" 
+            value={`${citasCount} registros`} 
+            onClick={() => setSheetActivo('historial')}
+            icon={<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></>}
+            bgColor="#e0f2fe" strokeColor="#0891b2"
+          />
+          <FilaPerfil 
+            label="Alergias registradas" 
+            value={totalAlergias === 0 ? 'Ninguna' : `${totalAlergias} registradas`} 
+            onClick={() => setSheetActivo('alergias')}
+            icon={<><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></>}
+            bgColor="#fef3c7" strokeColor="#d97706"
+          />
+          <FilaPerfil 
+            label="Configuración" 
+            onClick={() => setSheetActivo('configuracion')}
+            icon={<><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33"/></>}
+            bgColor="#f1f5f9" strokeColor="var(--muted)"
+          />
+          <FilaPerfil 
+            label="Política de privacidad" 
+            onClick={() => { if(window.abrirModalLegalPerfil) window.abrirModalLegalPerfil('privacidad'); else window.showToast('Funcionalidad en desarrollo', '🔒'); }}
+            icon={<><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></>}
+            bgColor="#cffafe" strokeColor="#0e7490"
+          />
+          <FilaPerfil 
+            label="Consentimiento informado" 
+            onClick={() => { if(window.abrirModalLegalPerfil) window.abrirModalLegalPerfil('consentimiento'); else window.showToast('Funcionalidad en desarrollo', '🔒'); }}
+            icon={<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></>}
+            bgColor="#e0f2fe" strokeColor="#0891b2"
+          />
+        </div>
+
+        <div className="profile-card" style={{ marginBottom: '1.5rem' }}>
+          <div className="profile-row">
+            <div className="pr-icon" style={{ background: '#f1f5f9' }}>
+               <svg viewBox="0 0 24 24" style={{ stroke: 'var(--muted)', fill: 'none', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' }}><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div className="pr-label">Versión de la app</div>
+            <div className="pr-value">1.0.0-demo</div>
+          </div>
+        </div>
+
+        <button className="logout-btn" onClick={() => { if(window.doLogout) window.doLogout(); }}>
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Cerrar sesión
+        </button>
+      </div>
+
+      {sheetActivo && PERFIL_SHEETS[sheetActivo] && (() => {
+        const { titulo, componente: Componente } = PERFIL_SHEETS[sheetActivo];
+        return (
+          <BottomSheetGeneric titulo={titulo} onCerrar={() => setSheetActivo(null)}>
+            <Componente 
+              uid={window.currentUid} 
+              paciente={paciente}
+              rut={paciente.rut || window.currentUser?.rut}
+              onCerrar={() => setSheetActivo(null)}
+              onGuardado={(datos) => { setPaciente(datos); setSheetActivo(null); }} 
+            />
+          </BottomSheetGeneric>
+        );
+      })()}
+    </div>
+  );
+}
+
+// ── Montaje ────────────────────────────────────────────────────────────────
+
+let _citasRoot = null, _resRoot = null, _perfilRoot = null;
+
+window.mountReactApps = function() {
+  const _citasEl = document.getElementById('citas-react-root');
+  if (_citasEl) {
+    if(!_citasRoot) _citasRoot = ReactDOM.createRoot(_citasEl);
+    _citasRoot.render(<CitasApp key={window.currentUid} />);
+  }
+
+  const _resEl = document.getElementById('resultados-react-root');
+  if (_resEl) {
+    if(!_resRoot) _resRoot = ReactDOM.createRoot(_resEl);
+    _resRoot.render(<ResultadosApp key={window.currentUid} />);
+  }
+
+  const _perfilEl = document.getElementById('perfil-react-root');
+  if (_perfilEl) {
+    if(!_perfilRoot) _perfilRoot = ReactDOM.createRoot(_perfilEl);
+    _perfilRoot.render(<PerfilApp key={window.currentUid} />);
+  }
+};
+
+window.mountReactApps();
+
+})();
+</script>
+
+<!-- Firebase: configuración y funciones de consentimiento -->
+<script>
+// ⚠️  Reemplaza estos valores con los de tu proyecto Firebase:
+//     Firebase Console → Configuración del proyecto → Tus apps → Configuración del SDK web
+const firebaseConfig = {
+  apiKey:            "AIzaSyBdedhr4yUsc1F665UXeBWBEj03U-ttO6Y",
+  authDomain:        "vinamed-10b76.firebaseapp.com",
+  projectId:         "vinamed-10b76",
+  storageBucket:     "vinamed-10b76.firebasestorage.app",
+  messagingSenderId: "902644783277",
+  appId:             "1:902644783277:web:ce55f4024a6ce4fd578e24",
+};
+
+let _db = null;
+try {
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  _db = firebase.firestore();
+  window._db = _db;
+} catch (_) { /* Firebase no configurado */ }
+
+window.guardarConsentimiento = async function(uid, datos) {
+  if (!_db) return;
+  await _db.collection('users').doc(uid)
+           .collection('legal').doc('consentimiento')
+           .set({
+             aceptado:  true,
+             version:   datos.version,
+             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+             items:     datos.items,
+           });
+};
+
+window.verificarConsentimiento = async function(uid) {
+  if (!_db) throw new Error('Firestore no inicializado');
+  const snap = await _db.collection('users').doc(uid)
+                        .collection('legal').doc('consentimiento')
+                        .get();
+  return snap.exists && snap.data().aceptado === true;
+};
+
+window.cargarFechaConsentimiento = async function(uid) {
+  if (!_db) return null;
+  const snap = await _db.collection('users').doc(uid)
+                        .collection('legal').doc('consentimiento')
+                        .get();
+  if (snap.exists && snap.data().timestamp) {
+    return snap.data().timestamp.toDate();
+  }
+  return null;
+};
+</script>
+
+<script>
+// Portal sin login interno (se maneja desde /login o /registro en Next.js)
+let unreadMsgs  = 1;
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Usuario "genérico" para no bloquear la UI.
+  // Si luego integras sesión real, aquí puedes hidratar desde Firebase Auth.
+  window.currentUser = window.currentUser || { name: 'Paciente', initials: 'P', rut: '' };
+  window.currentUid = window.currentUid || 'portal';
+
+  // Mostrar UI principal desde el inicio
+  if (typeof window.mountReactApps === 'function') window.mountReactApps();
+  if (typeof mostrarApp === 'function') mostrarApp();
+});
+
+function mostrarApp() {
   document.getElementById('appHeader').style.display = 'flex';
   document.getElementById('appMain').style.display = 'block';
   document.getElementById('bottomNav').style.display = 'flex';
 
-  const firstName = currentUser.name.split(' ')[0];
+  const firstName = (window.currentUser?.name || 'Paciente').split(' ')[0];
   document.getElementById('headerName').textContent = firstName;
-  document.getElementById('headerAvatar').textContent = currentUser.initials;
-  document.getElementById('profileAvatar').textContent = currentUser.initials;
-  document.getElementById('profileName').textContent = currentUser.name;
-  document.getElementById('profileRut').textContent = currentUser.rut;
+  document.getElementById('headerAvatar').textContent = window.currentUser?.initials || 'P';
+  
+  if(document.getElementById('profileAvatar')) document.getElementById('profileAvatar').textContent = window.currentUser?.initials || 'P';
+  if(document.getElementById('profileName')) document.getElementById('profileName').textContent = window.currentUser?.name || 'Paciente';
+  if(document.getElementById('profileRut')) document.getElementById('profileRut').textContent = window.currentUser?.rut || '';
+
+  // Render or Re-render React applications since currentUser is now available
+  if (typeof window.mountReactApps === 'function') {
+    window.mountReactApps();
+  }
 
   buildCalendar();
   setTimeout(() => showToast(`Bienvenida, ${firstName}`,'👋'), 300);
 }
 
 function doLogout() {
-  currentUser = null;
-  document.getElementById('loginScreen').classList.remove('hidden');
-  document.getElementById('appHeader').style.display = 'none';
-  document.getElementById('appMain').style.display = 'none';
-  document.getElementById('bottomNav').style.display = 'none';
-  showTab('home');
+  window.location.href = '/login';
 }
 
 // ─── NAVIGATION ──────────────────────────────────────────
@@ -1123,7 +2713,26 @@ function showTab(id) {
   if (page) page.classList.add('active');
   if (tab)  tab.classList.add('active');
   if (id === 'mensajes') clearUnread();
+  if (id === 'perfil')   actualizarFechaConsentimientoEnPerfil();
+  
+  // Refrescar componentes React si es necesario (el useEffect se encarga, pero para forzar render se puede hacer un mount/unmount si fuera necesario)
+  
   window.scrollTo(0, 0);
+}
+
+async function actualizarFechaConsentimientoEnPerfil() {
+  const el = document.getElementById('consent-fecha-valor');
+  if (!el || !currentUid) return;
+  try {
+    const fecha = await window.cargarFechaConsentimiento(currentUid);
+    if (fecha) {
+      el.textContent = 'Aceptado ' + fecha.toLocaleDateString('es-CL');
+      el.style.color = '';
+    } else {
+      el.textContent = 'Pendiente';
+      el.style.color = '#f97316';
+    }
+  } catch (_) { el.textContent = ''; }
 }
 
 function clearUnread() {
@@ -1159,7 +2768,7 @@ function filterResults(chip, cat) {
 // ─── CALENDAR ────────────────────────────────────────────
 function buildCalendar() {
   const strip = document.getElementById('calStrip');
-  strip.innerHTML = '';
+  if (!strip) return; // calendario manejado por React (CitasApp)
   const today = new Date();
   const dows  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
   const hasEvent = [3]; // index 3 = miércoles = 4 días desde hoy
@@ -1235,9 +2844,6 @@ if ('serviceWorker' in navigator) {
 }
 
 // ─── INIT ────────────────────────────────────────────────
-// Pre-fill for quick demo access
-document.getElementById('loginRut').value   = '17.543.210-K';
-document.getElementById('loginCode').value  = '123456';
 </script>
 </body>
 </html>
